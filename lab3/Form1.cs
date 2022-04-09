@@ -151,5 +151,10 @@ namespace WinFormsApp1
                 _selectedBrush.BrushColor= colorDialog1.Color;
             }
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
