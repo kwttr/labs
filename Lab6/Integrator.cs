@@ -42,7 +42,7 @@ namespace Lab6
             double sum = 0; //"накопитель" для значения интеграла
             for (int i = 0; i < N; i++)
             {
-                sum = sum + equation.GetValue(x1 + i * h) * h;
+                sum += equation.GetValue(x1 + i * h) * h;
             }
             return sum;
         }
@@ -57,7 +57,7 @@ namespace Lab6
             double sum = 0;
             for (int i = 0; i < N; i++)
             {
-                //sum = sum+equation.GetValue()
+                sum += (equation.GetValue(x1+h*i)+4*equation.GetValue(x1+h*(i+0.5))+equation.GetValue(x1+h*(i+1)))*h/6;
             }
             return sum;
         }

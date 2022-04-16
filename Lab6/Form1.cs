@@ -24,6 +24,10 @@ namespace Lab6
         public Form1()
         {
             InitializeComponent();
+            textBox1.Text = "0";
+            textBox2.Text = "0";
+            textBox3.Text = "0";
+            comboBox1.SelectedIndex = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,6 +37,8 @@ namespace Lab6
 
         private void button1_Click(object sender, EventArgs e)
         {
+            chart1.Series[0].Points.Clear();
+            try {
             switch (comboBox1.SelectedIndex)
             {
                 case 0:
@@ -53,6 +59,12 @@ namespace Lab6
                     Integrator s2 = new Integrator(ssin);
                     DrawFunction(-100, 100, chart1.Series[0], ssin);
                     break;
+                default: break;
+            }
+        }
+            catch (Exception ex)
+            {
+                textBox1.Text= ex.Message;
             }
         }
 
