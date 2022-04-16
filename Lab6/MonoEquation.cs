@@ -8,8 +8,8 @@ namespace Lab6
 {
     public class MonoEquation : Equation
     {
-        private readonly double k;
-        private readonly double b;
+        public double k { get; set; }
+        public double b { get; set; }
         public MonoEquation(double k,double b)
         {
             this.k = k;
@@ -18,6 +18,10 @@ namespace Lab6
         public override double GetValue(double x)
         {
             return k * x + b;
+        }
+        public override string ToString()
+        {
+            return "Линейная функция";
         }
     }
 }

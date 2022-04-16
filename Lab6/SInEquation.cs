@@ -8,7 +8,7 @@ namespace Lab6
 {
     public class SinEquation : Equation
     {
-        public readonly double a;
+        public double a;
         public SinEquation(double a)
         {
             this.a = a;
@@ -16,6 +16,10 @@ namespace Lab6
         public override double GetValue(double x)
         {
             return a * x * Math.Abs(Math.Sin(x));
+        }
+        public override string ToString()
+        {
+            return "Синусоидная функция";
         }
     }
 }

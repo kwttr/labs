@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,8 +12,23 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Lab6
 {
+    delegate void Print(double x);
     public partial class Form1 : Form
     {
+        Print ShowResult;
+        void PrintTB(double x)
+        {
+            textBox6.Text = Convert.ToString(x);
+        }
+        static void PrintMB(double x)
+        {
+            MessageBox.Show(Convert.ToString(x));
+        }
+        static void PrintFile(double x)
+        {
+            File.WriteAllText("text.txt", Convert.ToString(x)+" ");
+        }
+
         void DrawFunction(double x1, double x2, Series series, Equation equation)
         {
             for (int i = (int)x1; i < (int)x2; i++)
@@ -27,45 +43,54 @@ namespace Lab6
             textBox1.Text = "0";
             textBox2.Text = "0";
             textBox3.Text = "0";
+            textBox4.Text = "0";
+            textBox5.Text = "10";
+            comboBox1.Items.Add(new MonoEquation(0, 0));
+            comboBox1.Items.Add(new QuadEquation(0,0,0));
+            comboBox1.Items.Add(new SinEquation(0));
             comboBox1.SelectedIndex = 0;
+            comboBox2.Items.Add(new IntegrateRectangle());
+            comboBox2.Items.Add(new IntegrateSimpson());
+            comboBox2.SelectedIndex = 0;
+            comboBox3.SelectedIndex = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
-
+        static double AAA(double x)
+        {
+            return x+1;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
-            try {
-            switch (comboBox1.SelectedIndex)
+            var equation = comboBox1.SelectedItem as Equation;
+            var integr = comboBox2.SelectedItem as Integrator;
+            if (equation != null)
             {
-                case 0:
-                    if ((textBox1.Text != null) && textBox2.Text != null)
-                    {
-                        Equation mono = new MonoEquation(Convert.ToDouble(textBox1.Text), Convert.ToDouble(textBox2.Text));
-                        Integrator s0 = new Integrator(mono);
-                        DrawFunction(-100, 100, chart1.Series[0], mono);
-                    }
-                    break;
-                case 1:
-                    Equation quad = new QuadEquation(Convert.ToDouble(textBox1.Text), Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text));
-                    Integrator s1 = new Integrator(quad);
-                    DrawFunction(-100, 100, chart1.Series[0], quad);
-                    break;
-                case 2:
-                    Equation ssin = new SinEquation(Convert.ToDouble(textBox1.Text));
-                    Integrator s2 = new Integrator(ssin);
-                    DrawFunction(-100, 100, chart1.Series[0], ssin);
-                    break;
-                default: break;
+                if (equation is MonoEquation mono)
+                {
+                    mono.k = Convert.ToDouble(textBox1.Text);
+                    mono.b = Convert.ToDouble(textBox2.Text);
+                }
+                else if (equation is QuadEquation quad)
+                {
+                    quad.a = Convert.ToDouble(textBox1.Text);
+                    quad.b = Convert.ToDouble(textBox2.Text);
+                    quad.c = Convert.ToDouble(textBox3.Text);
+                }
+                else if (equation is SinEquation sin)
+                {
+                    sin.a = Convert.ToDouble(textBox1.Text);
+                }
+                DrawFunction(Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), chart1.Series[0], equation);
+                double s = integr.Integrate(equation.GetValue, Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text));
+                ShowResult?.Invoke(s);
             }
-        }
-            catch (Exception ex)
-            {
-                textBox1.Text= ex.Message;
-            }
+
+
         }
 
         private void button2_MouseClick(object sender, MouseEventArgs e)
@@ -73,36 +98,52 @@ namespace Lab6
             chart1.Series[0].Points.Clear();
         }
 
-        //private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    var ctrs = flowLayoutPanel1.Controls.OfType<Control>().ToArray();
-        //    flowLayoutPanel1.Controls.Clear();
-        //    for(int i = 0; i < ctrs.Length; i++)
-        //    {
-        //        ctrs[i].Dispose();
-        //    }
-        //    switch (comboBox1.SelectedIndex)
-        //    {
-        //        case 0:
-        //            TextBox LinK = new TextBox();
-        //            TextBox LinB = new TextBox();
-        //            flowLayoutPanel1.Controls.Add(LinK);
-        //            flowLayoutPanel1.Controls.Add(LinB);
-        //            break;
-        //        case 1:
-        //            TextBox QuadA = new TextBox();
-        //            TextBox QuadB = new TextBox();
-        //            TextBox QuadC = new TextBox();
-        //            flowLayoutPanel1.Controls.Add(QuadA);
-        //            flowLayoutPanel1.Controls.Add(QuadB);
-        //            flowLayoutPanel1.Controls.Add(QuadC);
-        //            break;
-        //        case 2:
-        //            TextBox SinA = new TextBox();
-        //            flowLayoutPanel1.Controls.Add(SinA);
-        //            break;
-        //        default:break;
-        //    }
-        //}
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    textBox1.Enabled = true;
+                    textBox2.Enabled = true;
+                    textBox3.Enabled = false;
+                    label1.Enabled = true;
+                    label2.Enabled = true;
+                    label3.Enabled = false;
+                    break;
+                case 1:
+                    textBox1.Enabled = true;
+                    textBox2.Enabled = true;
+                    textBox3.Enabled = true;
+                    label1.Enabled = true;
+                    label2.Enabled = true;
+                    label3.Enabled = true;
+                    break;
+                case 2:
+                    textBox1.Enabled = true;
+                    textBox2.Enabled = false;
+                    textBox3.Enabled = false;
+                    label1.Enabled = true;
+                    label2.Enabled = false;
+                    label3.Enabled = false;
+                    break;
+                default: break;
+            }
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedIndex == 0)
+            {
+                ShowResult = PrintTB;
+            }
+            else if (comboBox3.SelectedIndex == 1)
+            {
+                ShowResult = PrintMB;
+            }
+            else if (comboBox3.SelectedIndex == 2)
+            {
+                ShowResult = PrintFile;
+            }
+        }
     }
 }

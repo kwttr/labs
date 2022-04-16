@@ -20,6 +20,10 @@ namespace Lab2
         public string FirstName { get; set; }
         public string SecondName{ get; set; }
         public string BirthTime { get; set; }
+        public override string ToString()
+        {
+            return ToFullString();
+        }
         public string ToFullString()
         {
             return _FirstName +" "+ _SecondName +" "+ Convert.ToString(_BirthTime);

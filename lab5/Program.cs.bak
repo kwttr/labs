@@ -60,7 +60,7 @@ class Program
     }
     public static void AdditionalTask2(string input)
     {
-        Regex regex = new Regex(@"(https://|http://|ftp://)?(www\.)?([^\.\-][a-zA-Z0-9.\-_]+){1,5}(\.[a-z]{2,4})");
+        Regex regex = new Regex(@"(https://|http://|ftp://)?(www\.)([^\.\-][a-zA-Z0-9.\-_]+){1,5}(\.[a-z]{2,4})");
         Match m = regex.Match(input);
         if (m.Success)
         {

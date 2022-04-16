@@ -8,8 +8,12 @@ namespace Lab2
 
         static void Main()
         {
-            //ResearchTeam komanda = new ResearchTeam();
-            //Console.WriteLine(komanda.ToShortString());
+            ResearchTeam komanda = new ResearchTeam();
+            Console.WriteLine(komanda);
+            Person p = new Person();
+            Console.WriteLine(p);
+
+            return;
             //komanda.ThemeName = "Theme";
             //komanda.OrganisationName = "Organisation";
             //komanda.TeamId = 1;

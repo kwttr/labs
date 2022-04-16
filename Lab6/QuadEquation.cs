@@ -8,9 +8,9 @@ namespace Lab6
 {
     public class QuadEquation : Equation
     {
-        private readonly double a;
-        private readonly double b;
-        private readonly double c;
+        public double a;
+        public double b;
+        public double c;
 
         public QuadEquation(double a, double b, double c)
         {
@@ -21,6 +21,10 @@ namespace Lab6
         public override double GetValue(double x)
         {
             return a * x * x + b * x + c;
+        }
+        public override string ToString()
+        {
+            return "Квадратичная функция";
         }
     }
 }
