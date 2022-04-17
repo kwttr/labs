@@ -9,13 +9,12 @@ namespace Lab6
     class IntegrateSimpson : Integrator
     {
         public IntegrateSimpson(){ }
-        public override double Integrate(GetValueDelegate gv, double x1, double x2)
+        public override double Integrate(GetValueDelegate gv, double x1, double x2,double N)
         {            
             if (x1 >= x2)
             {
                 throw new ArgumentException("Правая граница интегирования должны быть больше левой!");
             }
-            int N = 100;
             double h = (x2 - x1) / N;
             double sum = 0;
             
@@ -26,9 +25,9 @@ namespace Lab6
             return sum;
         }
 
-        public override double Integrate(Equation equation, double x1, double x2)
-        {  
-           return Integrate(equation.GetValue, x1, x2);
+        public override double Integrate(Equation equation, double x1, double x2, double N)
+        {
+            return Integrate(equation.GetValue, x1, x2,N);
         }
 
         public override string ToString()

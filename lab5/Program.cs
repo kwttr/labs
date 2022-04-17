@@ -31,13 +31,13 @@ class Program
         Match m = regex.Match(input);
         if (regex.IsMatch(input))
         {
-            System.Console.WriteLine(m.Groups["city"]);
-            System.Console.WriteLine(m.Groups["subname"]);
-            System.Console.WriteLine(m.Groups["years"]);
+            Console.WriteLine(m.Groups["city"]);
+            Console.WriteLine(m.Groups["subname"]);
+            Console.WriteLine(m.Groups["years"]);
         }
         else
         {
-            System.Console.WriteLine("Не найдено");
+            Console.WriteLine("Не найдено");
         }
     }
     public static void AdditionalTask1(string input)
@@ -48,7 +48,7 @@ class Program
         {
             double kg = Converter(m.Groups["kg"].Value);
             double price = Converter(m.Groups["price"].Value);
-            System.Console.WriteLine(m.Groups["productname"] + " - " + price / kg + " руб/кг");
+            Console.WriteLine(m.Groups["productname"] + " - " + price / kg + " руб/кг");
             m = m.NextMatch();
         }
     }
@@ -60,16 +60,18 @@ class Program
     }
     public static void AdditionalTask2(string input)
     {
-        Regex regex = new Regex(@"(https://|http://|ftp://)?(www\.)?([^\.\-][a-zA-Z0-9.\-_]+){1,5}(\.[a-z]{2,4})");
-        Match m = regex.Match(input);
-        if (m.Success)
-        {
-            for (int i = 0; i < m.Groups.Count; ++i)
-            {
-                System.Console.WriteLine($"{i}:{m.Groups[i]}");
-            }
-        }
-        else Console.WriteLine("Error");
+        string pattern =@"(https://|http://|ftp://)?(www\.)?(?<domen>[^\-\.][a-zA-Z0-9\-_]+)\.(?<domen2>[^\-\.][a-zA-Z0-9\-_]+)((?<additdomens>\.[^\-\.][a-zA-Z0-9\-_]+){1,3})?";
+        MatchCollection matches = Regex.Matches(input, pattern);
+        foreach (Match match in matches)
+            Console.WriteLine("'{0}' найден в позиции '{1}'",match.Value,match.Index);
+        //while (m.Success)
+        //{
+        //        Console.Write("Найдена в позиции: ",m.Index," ");
+        //        Console.WriteLine(m.Groups[0]);
+        //    m = m.NextMatch();
+        //}
+        //if (m.Success == false) Console.WriteLine("Конец поиска");
+
     }
     public static void Main(String[] args)
     {

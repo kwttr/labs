@@ -12,8 +12,8 @@ namespace Lab6
 
     public abstract class Integrator
     {    
-        public abstract double Integrate(GetValueDelegate getValue, double x1, double x2);
-        public abstract double Integrate(Equation equation, double x1, double x2);
+        public abstract double Integrate(GetValueDelegate getValue, double x1, double x2,double N);
+        public abstract double Integrate(Equation equation, double x1, double x2,double N);
 
     }
 }

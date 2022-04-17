@@ -2,9 +2,39 @@
 {
     static void Main()
     {
-        // See https://aka.ms/new-console-template for more information
-        int year = Convert.ToInt32(Console.ReadLine());
-        if ((year % 4 == 0)&(year%100!=0)||(year%400==0)) Console.WriteLine("Введенный год високосный");
-        else Console.WriteLine("Введный год не високосный");
+        int[] array = new int[] { 9,2,2,2,2,2,2,3 };
+        int[] SourceArray = new int[array.Length];
+        array.CopyTo(SourceArray, 0);
+
+        int max = array[array.Length - 1];
+        array[array.Length - 1] = 0;
+        for (int i = array.Length - 2; i >= 0; i--)
+        {
+            if (array[i] >= max)
+            {
+                max = array[i];
+                array[i] = 0;
+            }
+            else if (array[i] < SourceArray[i + 1])
+            {
+                array[i] = SourceArray[i + 1];
+            }
+            else
+            {
+                array[i] = max;
+            }
+        }
+        Console.WriteLine("before:");
+        foreach (var num in SourceArray)
+        {
+            Console.Write($"{num} ");
+        }
+        Console.WriteLine();
+        Console.WriteLine("after:");
+        foreach (var num in array)
+        {
+            Console.Write($"{num} ");
+        }
+        Console.WriteLine();
     }
 }

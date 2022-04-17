@@ -10,7 +10,7 @@ namespace Lab6
     {
         public IntegrateRectangle()
         { }
-        public override double Integrate(GetValueDelegate equation,double x1, double x2)
+        public override double Integrate(GetValueDelegate equation,double x1, double x2,double N)
         {
             //проверяем допустимость параметров:
             if (x1 >= x2)
@@ -21,7 +21,6 @@ namespace Lab6
              * Считаем значение функции в точке, умножаем на ширину интервала.
              * Площадь полученного прямоугольника приблизительно равна значению интеграла на этом отрезке
              * суммируем значения площадей, получаем значение интеграла на отрезке [X1;X2]*/
-            int N = 100;    //количество интервалов разбиения
             //определяем ширину интервала:
             double h = (x2 - x1) / N;
             double sum = 0; //"накопитель" для значения интеграла
@@ -32,7 +31,7 @@ namespace Lab6
             return sum;
         }
 
-        public override double Integrate(Equation equation, double x1, double x2)
+        public override double Integrate(Equation equation, double x1, double x2,double N)
         {
             throw new NotImplementedException();
         }

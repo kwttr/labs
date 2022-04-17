@@ -86,8 +86,11 @@ namespace Lab6
                     sin.a = Convert.ToDouble(textBox1.Text);
                 }
                 DrawFunction(Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), chart1.Series[0], equation);
-                double s = integr.Integrate(equation.GetValue, Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text));
-                ShowResult?.Invoke(s);
+                if (textStep.Text != null)
+                {
+                    double s = integr.Integrate(equation.GetValue, Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textStep.Text));
+                    ShowResult?.Invoke(s);
+                }
             }
 
 
