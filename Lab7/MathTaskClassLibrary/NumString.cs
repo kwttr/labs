@@ -12,11 +12,13 @@ namespace MathTaskClassLibrary
         public int SumNumbers(string text)
         {
             int sum = 0;
-            Regex regex = new Regex(@"([0-9])+");
-            Match m = regex.Match(text);
-            while (m.Success)
+            text=text.Trim();
+            if (string.IsNullOrEmpty(text)) throw new ArgumentNullException("text");
+            for (int i = 0; i < text.Length; i++)
             {
-                sum += Convert.ToInt32(m.Value);
+                char.IsDigit(text, i);
+                if (char.IsDigit(text, i) != true) throw new Exception();
+                sum += int.Parse(text[i].ToString());
             }
             return sum;
         }

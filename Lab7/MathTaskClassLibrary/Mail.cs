@@ -10,9 +10,12 @@ namespace MathTaskClassLibrary
     {
         public bool CheckMail(string text)
         {
+            if (text == null)
+            {
+                throw new ArgumentNullException("text");
+            }
             Regex regex = new Regex(@"^([a-zA-Z0-9]{2,})@([a-z]{2,})\.([a-z]{2,})$");
-            Match match = regex.Match(text);
-            return match.Success;
+            return regex.IsMatch(text);
         }
     }
 }

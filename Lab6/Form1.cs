@@ -40,7 +40,7 @@ namespace Lab6
         public Form1()
         {
             InitializeComponent();
-            textBox1.Text = "0";
+            tbCoeffA.Text = "0";
             textBox2.Text = "0";
             textBox3.Text = "0";
             textBox4.Text = "0";
@@ -49,8 +49,8 @@ namespace Lab6
             comboBox1.Items.Add(new QuadEquation(0,0,0));
             comboBox1.Items.Add(new SinEquation(0));
             comboBox1.SelectedIndex = 0;
-            comboBox2.Items.Add(new IntegrateRectangle());
             comboBox2.Items.Add(new IntegrateSimpson());
+            comboBox2.Items.Add(new IntegrateRectangle());
             comboBox2.SelectedIndex = 0;
             comboBox3.SelectedIndex = 0;
         }
@@ -72,18 +72,18 @@ namespace Lab6
             {
                 if (equation is MonoEquation mono)
                 {
-                    mono.k = Convert.ToDouble(textBox1.Text);
+                    mono.k = Convert.ToDouble(tbCoeffA.Text);
                     mono.b = Convert.ToDouble(textBox2.Text);
                 }
                 else if (equation is QuadEquation quad)
                 {
-                    quad.a = Convert.ToDouble(textBox1.Text);
+                    quad.a = Convert.ToDouble(tbCoeffA.Text);
                     quad.b = Convert.ToDouble(textBox2.Text);
                     quad.c = Convert.ToDouble(textBox3.Text);
                 }
                 else if (equation is SinEquation sin)
                 {
-                    sin.a = Convert.ToDouble(textBox1.Text);
+                    sin.a = Convert.ToDouble(tbCoeffA.Text);
                 }
                 DrawFunction(Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), chart1.Series[0], equation);
                 if (textStep.Text != null)
@@ -106,7 +106,7 @@ namespace Lab6
             switch (comboBox1.SelectedIndex)
             {
                 case 0:
-                    textBox1.Enabled = true;
+                    tbCoeffA.Enabled = true;
                     textBox2.Enabled = true;
                     textBox3.Enabled = false;
                     label1.Enabled = true;
@@ -114,7 +114,7 @@ namespace Lab6
                     label3.Enabled = false;
                     break;
                 case 1:
-                    textBox1.Enabled = true;
+                    tbCoeffA.Enabled = true;
                     textBox2.Enabled = true;
                     textBox3.Enabled = true;
                     label1.Enabled = true;
@@ -122,7 +122,7 @@ namespace Lab6
                     label3.Enabled = true;
                     break;
                 case 2:
-                    textBox1.Enabled = true;
+                    tbCoeffA.Enabled = true;
                     textBox2.Enabled = false;
                     textBox3.Enabled = false;
                     label1.Enabled = true;

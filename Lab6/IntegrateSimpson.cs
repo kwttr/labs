@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab6
 {
-    class IntegrateSimpson : Integrator
+    public class IntegrateSimpson : Integrator
     {
         public IntegrateSimpson(){ }
         public override double Integrate(GetValueDelegate gv, double x1, double x2,double N)
@@ -15,6 +15,7 @@ namespace Lab6
             {
                 throw new ArgumentException("Правая граница интегирования должны быть больше левой!");
             }
+            if (N < 0) throw new ArgumentException();
             double h = (x2 - x1) / N;
             double sum = 0;
             

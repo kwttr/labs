@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab1", "Lab1\Lab1.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab2", "lab2\Lab2.csproj", "{8140832A-F95A-4509-A24E-657D62F9180D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semaphor", "Семафор\Semaphor\Semaphor.csproj", "{6E95166C-5124-4E24-9B5C-B557B253BEC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{8140832A-F95A-4509-A24E-657D62F9180D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8140832A-F95A-4509-A24E-657D62F9180D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8140832A-F95A-4509-A24E-657D62F9180D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E95166C-5124-4E24-9B5C-B557B253BEC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E95166C-5124-4E24-9B5C-B557B253BEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E95166C-5124-4E24-9B5C-B557B253BEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E95166C-5124-4E24-9B5C-B557B253BEC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

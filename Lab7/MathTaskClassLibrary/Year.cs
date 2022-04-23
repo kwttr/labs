@@ -8,9 +8,9 @@ namespace MathTaskClassLibrary
 {
     public class Year
     {
-        public int DefineDays(int year)
+        public static int DetermineLeapYear(int year)
         {
-            if (year < 0) throw new ArgumentOutOfRangeException();
+            if (year <= 0) throw new ArgumentOutOfRangeException();
             bool visokos = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
             if (visokos == true) return 366;
             else return 365;

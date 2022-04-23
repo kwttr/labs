@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Lab6
 {
-    public class IntegrateRectangle : Integrator
+    public class IntegrateSimpson : Integrator
     {
-        public IntegrateRectangle()
+        public IntegrateSimpson()
         { }
         public override double Integrate(GetValueDelegate equation,double x1, double x2,double N)
         {

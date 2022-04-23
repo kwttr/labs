@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace MathTaskClassLibrary
 {
-    public class Alphabit
+    public class Alphabet
     {
-        public string AlphabitArea(int N)
+        public string PrintAlphabet(int N)
         {
             if (N < 1 || N > 26) throw new ArgumentException();
-            string sum = null;
+            StringBuilder sum = new StringBuilder();
             for (int i = 0; i < N; i++)
             {
-                sum += (char)('A'+i);
+                
+                sum.Append((char)('A'+i));
             }
-            return sum;
+            return sum.ToString();
         }
     }
 }

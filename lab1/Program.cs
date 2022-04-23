@@ -2,7 +2,7 @@
 {
     static void Main()
     {
-        int[] array = new int[] { 9,2,2,2,2,2,2,3 };
+        int[] array = new int[] { 9,9,10,9,9,9,12 };
         int[] SourceArray = new int[array.Length];
         array.CopyTo(SourceArray, 0);
 

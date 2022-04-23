@@ -15,7 +15,7 @@ namespace MathTaskClassLibraryTests
             int expected = 15;
 
             Geometry g = new Geometry();
-            int actual = g.RectangleArea(a, b);
+            int actual = g.CalculateArea(a, b);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod]
@@ -28,7 +28,7 @@ namespace MathTaskClassLibraryTests
                 int b = 10;
 
                 Geometry g = new Geometry();
-                g.RectangleArea(a, b);
+                g.CalculateArea(a, b);
             }
             catch (ArgumentException ex)
             {
@@ -43,7 +43,7 @@ namespace MathTaskClassLibraryTests
             int b = 10;
 
             Geometry g = new Geometry();
-            Assert.ThrowsException<ArgumentException>(() => g.RectangleArea(a, b), "не обработаны отрицательные длины сторон прямоугольника");
+            Assert.ThrowsException<ArgumentException>(() => g.CalculateArea(a, b), "не обработаны отрицательные длины сторон прямоугольника");
         }
     }
 }

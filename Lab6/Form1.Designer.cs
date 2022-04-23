@@ -38,7 +38,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbCoeffA = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -48,12 +48,12 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textStep = new System.Windows.Forms.TextBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.textStep = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.toolsPanel.SuspendLayout();
@@ -127,7 +127,7 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.label1);
-            this.flowLayoutPanel1.Controls.Add(this.textBox1);
+            this.flowLayoutPanel1.Controls.Add(this.tbCoeffA);
             this.flowLayoutPanel1.Controls.Add(this.label2);
             this.flowLayoutPanel1.Controls.Add(this.textBox2);
             this.flowLayoutPanel1.Controls.Add(this.label3);
@@ -159,13 +159,13 @@
             this.label1.Text = "a";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // tbCoeffA
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox1.Location = new System.Drawing.Point(22, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(166, 20);
-            this.textBox1.TabIndex = 0;
+            this.tbCoeffA.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbCoeffA.Location = new System.Drawing.Point(22, 3);
+            this.tbCoeffA.Name = "tbCoeffA";
+            this.tbCoeffA.Size = new System.Drawing.Size(166, 20);
+            this.tbCoeffA.TabIndex = 0;
             // 
             // label2
             // 
@@ -251,6 +251,25 @@
             this.textBox5.Size = new System.Drawing.Size(202, 20);
             this.textBox5.TabIndex = 10;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label7.Location = new System.Drawing.Point(3, 183);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(123, 13);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Количество разбиений";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // textStep
+            // 
+            this.textStep.Dock = System.Windows.Forms.DockStyle.Top;
+            this.textStep.Location = new System.Drawing.Point(3, 199);
+            this.textStep.Name = "textStep";
+            this.textStep.Size = new System.Drawing.Size(202, 20);
+            this.textStep.TabIndex = 14;
+            // 
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
@@ -294,25 +313,6 @@
             this.comboBox1.TabIndex = 3;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // textStep
-            // 
-            this.textStep.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textStep.Location = new System.Drawing.Point(3, 199);
-            this.textStep.Name = "textStep";
-            this.textStep.Size = new System.Drawing.Size(202, 20);
-            this.textStep.TabIndex = 14;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label7.Location = new System.Drawing.Point(3, 183);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(123, 13);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "Количество разбиений";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -344,7 +344,7 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbCoeffA;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label3;

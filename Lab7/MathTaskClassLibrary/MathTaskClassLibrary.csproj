@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geometry.cs" />
-    <Compile Include="Alphabit.cs" />
+    <Compile Include="Alphabet.cs" />
     <Compile Include="Mail.cs" />
     <Compile Include="NumString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

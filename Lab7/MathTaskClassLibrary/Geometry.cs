@@ -8,7 +8,7 @@ namespace MathTaskClassLibrary
 {
     public class Geometry
     {
-        public int RectangleArea(int a,int b)
+        public int CalculateArea(int a,int b)
         {
             if (a < 0 || b < 0) throw new ArgumentException();
             return a * b;
