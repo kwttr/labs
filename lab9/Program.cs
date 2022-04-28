@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-
+using System.Threading;
 
 public class Program
 {
+    //Это какое-то логирование, которое я не понял как делать
     //public void Configure(IApplicationBuilder app, ILogger<Program> logger)
     //{
     //    app.Run(async (context) =>
@@ -16,13 +17,26 @@ public class Program
     //public static void Comparising(List<FileInfo> list,FileInfo f)
     //{
     //}
-    public static void DeleteEmptyFolders(DirectoryInfo dir)
+
+
+    //Удаление пустых папок
+    public static void DeleteEmptyFolders(string path)
     {
-        foreach(var file in dir.GetDirectories())
+        DirectoryInfo dir = new DirectoryInfo(path);
+        foreach(var file in dir.GetDirectories("*.*",SearchOption.AllDirectories).Reverse()) //Нашел реверс, гениально х2
         {
-            if (file.GetFiles().Length == 0) file.Delete();
+            try
+            {
+                if (file.GetFiles().Length == 0) file.Delete();
+            }
+            catch (IOException)
+            {
+                continue;
+            }
         }
     }
+
+    //Вывод в консоль всех файлов
     public static void PrintList(List<FileInfo> list)
     {
         foreach (FileInfo s in list)
@@ -31,6 +45,24 @@ public class Program
         }
     }
 
+    //Создание листа файлов
+    public static List<FileInfo> CreateListFiles(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            var directory = new DirectoryInfo(path);
+            FileInfo[] files = directory.GetFiles("*.*", SearchOption.AllDirectories);
+            List<FileInfo> filesList = new List<FileInfo>();
+            foreach (FileInfo file in files)
+            {
+                filesList.Add(file);
+            }
+            return filesList;
+        }
+        return null;
+    }
+
+    //Поиск дубликатов по содержимому
     public static void SearchingDublicatesByteComparesing(List<FileInfo> list)
     {
         int file1byte;
@@ -47,7 +79,7 @@ public class Program
                     {
                         fs1 = new FileStream(list[i].FullName, FileMode.Open);
                         fs2 = new FileStream(list[j].FullName, FileMode.Open);
-                        if(fs1.Length != fs2.Length)
+                        if (fs1.Length != fs2.Length)
                         {
                             fs1.Close();
                             fs2.Close();
@@ -61,7 +93,26 @@ public class Program
                         while ((file1byte == file2byte) && (file1byte != -1));
                         fs1.Close();
                         fs2.Close();
-                        File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName+"\n");
+                        File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
+                        list[j].Delete();
+                        list.RemoveAt(j);
+                        j--; //гениально же, ну.
+                    }
+                }
+        }
+    }
+
+    //Поиск дубликатов по имени и размеру
+    public static void SearchingDublicatesNameAndSize(List<FileInfo> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].Exists)
+                for (int j = i + 1; j < list.Count; j++)
+                {
+                    if (list[j].Exists && (list[i].Name == list[j].Name) && (list[i].Length == list[j].Length))
+                    {
+                        File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
                         list[j].Delete();
                         list.Remove(list[j]);
                     }
@@ -69,23 +120,8 @@ public class Program
         }
     }
 
-    public static void SearchingDublicatesNameAndSize(List<FileInfo> list)
-    {
-        for(int i = 0; i < list.Count; i++)
-        {
-            if(list[i].Exists)
-            for(int j = i + 1; j < list.Count; j++)
-            {
-                if (list[j].Exists&&((list[i].Name==list[j].Name)&&(list[i].Length==list[j].Length)))
-                {
-                    File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + "\n");
-                    list[j].Delete();
-                    list.Remove(list[j]);
-                }
-            }
-        }
-    }
 
+    //Поиск дубликатов по имени и дате
     public static void SearchingDublicatesNameAndDate(List<FileInfo> list)
     {
         for (int i = 0; i < list.Count; i++)
@@ -93,9 +129,9 @@ public class Program
             if (list[i].Exists)
                 for (int j = i + 1; j < list.Count; j++)
                 {
-                    if (list[j].Exists && ((list[i].Name == list[j].Name) && (list[i].CreationTime == list[j].CreationTime)))
+                    if (list[j].Exists && (list[i].Name == list[j].Name) && (list[i].CreationTime.Day == list[j].CreationTime.Day))
                     {
-                        File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + "\n");
+                        File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
                         list[j].Delete();
                         list.Remove(list[j]);
                     }
@@ -103,9 +139,12 @@ public class Program
         }
     }
 
-    public static void SortingByDay(List<FileInfo> list,string path)
+
+
+    //Сортировка по дням
+    public static void SortingByDay(List<FileInfo> list, string path)
     {
-        foreach(FileInfo file in list)
+        foreach (FileInfo file in list)
         {
             if (file.Exists)
             {
@@ -116,13 +155,14 @@ public class Program
                     DirectoryInfo dirInfo = new DirectoryInfo(subpath);
                     dirInfo.Create();
                 }
-                subpath = path + "/" + day+"/";
+                subpath = path + "/" + day + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath+file.Name,true);
+                file.MoveTo(subpath + file.Name, true);
             }
         }
     }
 
+    //Сортировка по неделям
     public static void SortingByWeek(List<FileInfo> list, string path)
     {
         foreach (FileInfo file in list)
@@ -143,6 +183,7 @@ public class Program
         }
     }
 
+    //Сортировка по месяцам
     public static void SortingByMonth(List<FileInfo> list, string path)
     {
         foreach (FileInfo file in list)
@@ -162,37 +203,47 @@ public class Program
             }
         }
     }
+
+    public static void SortingByYear(List<FileInfo> list, string path)
+    {
+        foreach (FileInfo file in list)
+        {
+            if (file.Exists)
+            {
+                int Year = file.CreationTime.Year;
+                string subpath = path + "/" + Year;
+                if (!Directory.Exists(subpath))
+                {
+                    DirectoryInfo dirInfo = new DirectoryInfo(subpath);
+                    dirInfo.Create();
+                }
+                subpath = path + "/" + Year + "/";
+                File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
+                file.MoveTo(subpath + file.Name);
+            }
+        }
+    }
     /// 
-    /// 
+    ///
     /// 
     /// 
 
     public static void Main(string[] args)
     {
-        string path = "C:/Users/Kerbix/Desktop/чзх";
-        if (Directory.Exists(path))
-        {
-            var directory = new DirectoryInfo(path);
-            FileInfo[] files = directory.GetFiles();
+        File.AppendAllText("log.txt", "Начало работы программы \n\n");
+         string path = "C:/Users/Kerbix/Desktop/test";
 
-            List<FileInfo> filesList = new List<FileInfo>();
-            foreach (FileInfo file in files)
-            {
-                filesList.Add(file);
-            }
 
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
-            {
-                var nestedDirectory = new DirectoryInfo(dir);
-                FileInfo[] nestedFiles = nestedDirectory.GetFiles();
-                foreach (FileInfo f in nestedFiles)
-                {
-                    filesList.Add(f);
-                }
-            }
-            SortingByWeek(filesList, path);
-            DeleteEmptyFolders(directory);
-        }
+        //Добавление файлов в лист
+        List<FileInfo> filesList = CreateListFiles(path);
+
+        //Вызов методов
+        PrintList(filesList);
+        SearchingDublicatesByteComparesing(filesList);
+        Console.WriteLine("После поиска\n");
+        PrintList(filesList);
+        DeleteEmptyFolders(path);
+
+        File.AppendAllText("log.txt", "Конец работы программы \n\n");
     }
-}   
+}
