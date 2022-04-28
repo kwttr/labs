@@ -28,32 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonDraw = new System.Windows.Forms.Button();
             this.toolsPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.tbCoeffA = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbCoeffB = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.tbCoeffC = new System.Windows.Forms.TextBox();
+            this.cbListIntegr = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.tbLeftBorder = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.tbRightBorder = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textStep = new System.Windows.Forms.TextBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.cbListDelegate = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.tbArea = new System.Windows.Forms.TextBox();
+            this.cbListEquations = new System.Windows.Forms.ComboBox();
+            this.lbOnStep = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.toolsPanel.SuspendLayout();
@@ -66,47 +67,47 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(781, 559);
+            this.pictureBox1.Size = new System.Drawing.Size(991, 685);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Left;
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(570, 559);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(570, 685);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
             // 
-            // button1
+            // buttonDraw
             // 
-            this.button1.Location = new System.Drawing.Point(3, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 49);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Нарисовать график";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonDraw.Location = new System.Drawing.Point(3, 3);
+            this.buttonDraw.Name = "buttonDraw";
+            this.buttonDraw.Size = new System.Drawing.Size(94, 49);
+            this.buttonDraw.TabIndex = 2;
+            this.buttonDraw.Text = "Нарисовать график";
+            this.buttonDraw.UseVisualStyleBackColor = true;
+            this.buttonDraw.Click += new System.EventHandler(this.button1_Click);
             // 
             // toolsPanel
             // 
             this.toolsPanel.Controls.Add(this.tableLayoutPanel1);
             this.toolsPanel.Controls.Add(this.flowLayoutPanel1);
-            this.toolsPanel.Controls.Add(this.comboBox1);
+            this.toolsPanel.Controls.Add(this.cbListEquations);
             this.toolsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.toolsPanel.Location = new System.Drawing.Point(576, 0);
+            this.toolsPanel.Location = new System.Drawing.Point(786, 0);
             this.toolsPanel.Name = "toolsPanel";
-            this.toolsPanel.Size = new System.Drawing.Size(205, 559);
+            this.toolsPanel.Size = new System.Drawing.Size(205, 685);
             this.toolsPanel.TabIndex = 3;
             // 
             // tableLayoutPanel1
@@ -114,9 +115,9 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonDraw, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 344);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 435);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -129,23 +130,24 @@
             this.flowLayoutPanel1.Controls.Add(this.label1);
             this.flowLayoutPanel1.Controls.Add(this.tbCoeffA);
             this.flowLayoutPanel1.Controls.Add(this.label2);
-            this.flowLayoutPanel1.Controls.Add(this.textBox2);
+            this.flowLayoutPanel1.Controls.Add(this.tbCoeffB);
             this.flowLayoutPanel1.Controls.Add(this.label3);
-            this.flowLayoutPanel1.Controls.Add(this.textBox3);
-            this.flowLayoutPanel1.Controls.Add(this.comboBox2);
+            this.flowLayoutPanel1.Controls.Add(this.tbCoeffC);
+            this.flowLayoutPanel1.Controls.Add(this.cbListIntegr);
             this.flowLayoutPanel1.Controls.Add(this.label4);
-            this.flowLayoutPanel1.Controls.Add(this.textBox4);
+            this.flowLayoutPanel1.Controls.Add(this.tbLeftBorder);
             this.flowLayoutPanel1.Controls.Add(this.label5);
-            this.flowLayoutPanel1.Controls.Add(this.textBox5);
+            this.flowLayoutPanel1.Controls.Add(this.tbRightBorder);
             this.flowLayoutPanel1.Controls.Add(this.label7);
             this.flowLayoutPanel1.Controls.Add(this.textStep);
-            this.flowLayoutPanel1.Controls.Add(this.comboBox3);
+            this.flowLayoutPanel1.Controls.Add(this.cbListDelegate);
             this.flowLayoutPanel1.Controls.Add(this.label6);
-            this.flowLayoutPanel1.Controls.Add(this.textBox6);
+            this.flowLayoutPanel1.Controls.Add(this.tbArea);
+            this.flowLayoutPanel1.Controls.Add(this.lbOnStep);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 21);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(205, 323);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(205, 414);
             this.flowLayoutPanel1.TabIndex = 4;
             // 
             // label1
@@ -178,13 +180,13 @@
             this.label2.Text = "b";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox2
+            // tbCoeffB
             // 
-            this.textBox2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox2.Location = new System.Drawing.Point(22, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(166, 20);
-            this.textBox2.TabIndex = 1;
+            this.tbCoeffB.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbCoeffB.Location = new System.Drawing.Point(22, 29);
+            this.tbCoeffB.Name = "tbCoeffB";
+            this.tbCoeffB.Size = new System.Drawing.Size(166, 20);
+            this.tbCoeffB.TabIndex = 1;
             // 
             // label3
             // 
@@ -197,21 +199,21 @@
             this.label3.Text = "c";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox3
+            // tbCoeffC
             // 
-            this.textBox3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox3.Location = new System.Drawing.Point(22, 55);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(166, 20);
-            this.textBox3.TabIndex = 2;
+            this.tbCoeffC.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbCoeffC.Location = new System.Drawing.Point(22, 55);
+            this.tbCoeffC.Name = "tbCoeffC";
+            this.tbCoeffC.Size = new System.Drawing.Size(166, 20);
+            this.tbCoeffC.TabIndex = 2;
             // 
-            // comboBox2
+            // cbListIntegr
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(3, 81);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(200, 21);
-            this.comboBox2.TabIndex = 6;
+            this.cbListIntegr.FormattingEnabled = true;
+            this.cbListIntegr.Location = new System.Drawing.Point(3, 81);
+            this.cbListIntegr.Name = "cbListIntegr";
+            this.cbListIntegr.Size = new System.Drawing.Size(200, 21);
+            this.cbListIntegr.TabIndex = 6;
             // 
             // label4
             // 
@@ -224,13 +226,13 @@
             this.label4.Text = "Левая граница интегрирования";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox4
+            // tbLeftBorder
             // 
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox4.Location = new System.Drawing.Point(3, 121);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(202, 20);
-            this.textBox4.TabIndex = 8;
+            this.tbLeftBorder.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbLeftBorder.Location = new System.Drawing.Point(3, 121);
+            this.tbLeftBorder.Name = "tbLeftBorder";
+            this.tbLeftBorder.Size = new System.Drawing.Size(202, 20);
+            this.tbLeftBorder.TabIndex = 8;
             // 
             // label5
             // 
@@ -243,13 +245,13 @@
             this.label5.Text = "Правая граница интегрирования";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox5
+            // tbRightBorder
             // 
-            this.textBox5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox5.Location = new System.Drawing.Point(3, 160);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(202, 20);
-            this.textBox5.TabIndex = 10;
+            this.tbRightBorder.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbRightBorder.Location = new System.Drawing.Point(3, 160);
+            this.tbRightBorder.Name = "tbRightBorder";
+            this.tbRightBorder.Size = new System.Drawing.Size(202, 20);
+            this.tbRightBorder.TabIndex = 10;
             // 
             // label7
             // 
@@ -270,18 +272,18 @@
             this.textStep.Size = new System.Drawing.Size(202, 20);
             this.textStep.TabIndex = 14;
             // 
-            // comboBox3
+            // cbListDelegate
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
+            this.cbListDelegate.FormattingEnabled = true;
+            this.cbListDelegate.Items.AddRange(new object[] {
             "TextBox",
             "MessageBox",
             "File"});
-            this.comboBox3.Location = new System.Drawing.Point(3, 225);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(200, 21);
-            this.comboBox3.TabIndex = 13;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.cbListDelegate.Location = new System.Drawing.Point(3, 225);
+            this.cbListDelegate.Name = "cbListDelegate";
+            this.cbListDelegate.Size = new System.Drawing.Size(200, 21);
+            this.cbListDelegate.TabIndex = 13;
+            this.cbListDelegate.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // label6
             // 
@@ -294,30 +296,38 @@
             this.label6.Text = "Площадь:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox6
+            // tbArea
             // 
-            this.textBox6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox6.Location = new System.Drawing.Point(3, 265);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(202, 20);
-            this.textBox6.TabIndex = 12;
+            this.tbArea.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbArea.Location = new System.Drawing.Point(3, 265);
+            this.tbArea.Name = "tbArea";
+            this.tbArea.ReadOnly = true;
+            this.tbArea.Size = new System.Drawing.Size(202, 20);
+            this.tbArea.TabIndex = 12;
             // 
-            // comboBox1
+            // cbListEquations
             // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(0, 0);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(205, 21);
-            this.comboBox1.TabIndex = 3;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.cbListEquations.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbListEquations.FormattingEnabled = true;
+            this.cbListEquations.Location = new System.Drawing.Point(0, 0);
+            this.cbListEquations.Name = "cbListEquations";
+            this.cbListEquations.Size = new System.Drawing.Size(205, 21);
+            this.cbListEquations.TabIndex = 3;
+            this.cbListEquations.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // lbOnStep
+            // 
+            this.lbOnStep.FormattingEnabled = true;
+            this.lbOnStep.Location = new System.Drawing.Point(3, 291);
+            this.lbOnStep.Name = "lbOnStep";
+            this.lbOnStep.Size = new System.Drawing.Size(202, 95);
+            this.lbOnStep.TabIndex = 5;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(781, 559);
+            this.ClientSize = new System.Drawing.Size(991, 685);
             this.Controls.Add(this.toolsPanel);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.pictureBox1);
@@ -338,27 +348,28 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonDraw;
         private System.Windows.Forms.Panel toolsPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbListEquations;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbCoeffA;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbCoeffB;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TextBox tbCoeffC;
+        private System.Windows.Forms.ComboBox cbListIntegr;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox tbLeftBorder;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox tbRightBorder;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.TextBox tbArea;
+        private System.Windows.Forms.ComboBox cbListDelegate;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textStep;
+        private System.Windows.Forms.ListBox lbOnStep;
     }
 }
 

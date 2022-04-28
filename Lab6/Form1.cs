@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static Lab6.Integrator;
 
 namespace Lab6
 {
@@ -18,7 +19,7 @@ namespace Lab6
         Print ShowResult;
         void PrintTB(double x)
         {
-            textBox6.Text = Convert.ToString(x);
+            tbArea.Text = Convert.ToString(x);
         }
         static void PrintMB(double x)
         {
@@ -26,9 +27,16 @@ namespace Lab6
         }
         static void PrintFile(double x)
         {
-            File.WriteAllText("text.txt", Convert.ToString(x)+" ");
+            File.WriteAllText("C:/Users/Kerbix/Desktop/выфа/labs/Lab6/text.txt", Convert.ToString(x)+" ");
         }
-
+        void PrintLB(double x, double f, double sum)
+        {
+            lbOnStep.Text = lbOnStep.Text+Convert.ToString(x) + " " + Convert.ToString(f) + " " + Convert.ToString(sum)+"\n";
+        }
+        static void PrintFile(double x, double f,double sum)
+        {
+            File.WriteAllText("C:/Users/Kerbix/Desktop/выфа/labs/Lab6/text.txt", Convert.ToString(x) + " " + Convert.ToString(f) + " " + Convert.ToString(sum));
+        }
         void DrawFunction(double x1, double x2, Series series, Equation equation)
         {
             for (int i = (int)x1; i < (int)x2; i++)
@@ -41,59 +49,54 @@ namespace Lab6
         {
             InitializeComponent();
             tbCoeffA.Text = "0";
-            textBox2.Text = "0";
-            textBox3.Text = "0";
-            textBox4.Text = "0";
-            textBox5.Text = "10";
-            comboBox1.Items.Add(new MonoEquation(0, 0));
-            comboBox1.Items.Add(new QuadEquation(0,0,0));
-            comboBox1.Items.Add(new SinEquation(0));
-            comboBox1.SelectedIndex = 0;
-            comboBox2.Items.Add(new IntegrateSimpson());
-            comboBox2.Items.Add(new IntegrateRectangle());
-            comboBox2.SelectedIndex = 0;
-            comboBox3.SelectedIndex = 0;
+            tbCoeffB.Text = "0";
+            tbCoeffC.Text = "0";
+            tbLeftBorder.Text = "0";
+            tbRightBorder.Text = "10";
+            textStep.Text = "0";
+            cbListEquations.Items.Add(new MonoEquation(0, 0));
+            cbListEquations.Items.Add(new QuadEquation(0,0,0));
+            cbListEquations.Items.Add(new SinEquation(0));
+            cbListEquations.SelectedIndex = 0;
+            cbListIntegr.Items.Add(new IntegrateSimpson());
+            cbListIntegr.Items.Add(new IntegrateRectangle());
+            cbListIntegr.SelectedIndex = 0;
+            cbListDelegate.SelectedIndex = 0;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+        private void Form1_Load(object sender, EventArgs e){}
 
-        }
-        static double AAA(double x)
-        {
-            return x+1;
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
-            var equation = comboBox1.SelectedItem as Equation;
-            var integr = comboBox2.SelectedItem as Integrator;
-            if (equation != null)
+            var equation = cbListEquations.SelectedItem as Equation;
+            var integr = cbListIntegr.SelectedItem as Integrator;
+            integr.OnStep += new IntStepDelegate(PrintLB);
+            integr.OnStep += PrintFile;
+            if (equation != null)   
             {
                 if (equation is MonoEquation mono)
                 {
                     mono.k = Convert.ToDouble(tbCoeffA.Text);
-                    mono.b = Convert.ToDouble(textBox2.Text);
+                    mono.b = Convert.ToDouble(tbCoeffB.Text);
                 }
                 else if (equation is QuadEquation quad)
                 {
                     quad.a = Convert.ToDouble(tbCoeffA.Text);
-                    quad.b = Convert.ToDouble(textBox2.Text);
-                    quad.c = Convert.ToDouble(textBox3.Text);
+                    quad.b = Convert.ToDouble(tbCoeffB.Text);
+                    quad.c = Convert.ToDouble(tbCoeffC.Text);
                 }
                 else if (equation is SinEquation sin)
                 {
                     sin.a = Convert.ToDouble(tbCoeffA.Text);
                 }
-                DrawFunction(Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), chart1.Series[0], equation);
-                if (textStep.Text != null)
+                DrawFunction(Convert.ToDouble(tbLeftBorder.Text), Convert.ToDouble(tbRightBorder.Text), chart1.Series[0], equation);
+                if (textStep.Text != "")
                 {
-                    double s = integr.Integrate(equation.GetValue, Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textStep.Text));
+                    double s = integr.Integrate(equation.GetValue, Convert.ToDouble(tbLeftBorder.Text), Convert.ToDouble(tbRightBorder.Text), Convert.ToDouble(textStep.Text));
                     ShowResult?.Invoke(s);
                 }
             }
-
-
         }
 
         private void button2_MouseClick(object sender, MouseEventArgs e)
@@ -103,28 +106,28 @@ namespace Lab6
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboBox1.SelectedIndex)
+            switch (cbListEquations.SelectedIndex)
             {
                 case 0:
                     tbCoeffA.Enabled = true;
-                    textBox2.Enabled = true;
-                    textBox3.Enabled = false;
+                    tbCoeffB.Enabled = true;
+                    tbCoeffC.Enabled = false;
                     label1.Enabled = true;
                     label2.Enabled = true;
                     label3.Enabled = false;
                     break;
                 case 1:
                     tbCoeffA.Enabled = true;
-                    textBox2.Enabled = true;
-                    textBox3.Enabled = true;
+                    tbCoeffB.Enabled = true;
+                    tbCoeffC.Enabled = true;
                     label1.Enabled = true;
                     label2.Enabled = true;
                     label3.Enabled = true;
                     break;
                 case 2:
                     tbCoeffA.Enabled = true;
-                    textBox2.Enabled = false;
-                    textBox3.Enabled = false;
+                    tbCoeffB.Enabled = false;
+                    tbCoeffC.Enabled = false;
                     label1.Enabled = true;
                     label2.Enabled = false;
                     label3.Enabled = false;
@@ -135,15 +138,15 @@ namespace Lab6
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox3.SelectedIndex == 0)
+            if (cbListDelegate.SelectedIndex == 0)
             {
                 ShowResult = PrintTB;
             }
-            else if (comboBox3.SelectedIndex == 1)
+            else if (cbListDelegate.SelectedIndex == 1)
             {
                 ShowResult = PrintMB;
             }
-            else if (comboBox3.SelectedIndex == 2)
+            else if (cbListDelegate.SelectedIndex == 2)
             {
                 ShowResult = PrintFile;
             }

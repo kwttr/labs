@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Lab6
 {
+
     public class IntegrateRectangle : Integrator
     {
-        public IntegrateRectangle()
-        { }
+        public IntegrateRectangle() { }
         public override double Integrate(GetValueDelegate equation,double x1, double x2,double N)
         {
             //проверяем допустимость параметров:
@@ -27,7 +27,9 @@ namespace Lab6
             for (int i = 0; i < N; i++)
             {
                 sum += equation(x1 + i * h) * h;
+                RaiseStepEvent(x1+i, equation(x1+i), sum);
             }
+            RaiseFinishEvent(sum);
             return sum;
         }
 
@@ -35,6 +37,32 @@ namespace Lab6
         {
             throw new NotImplementedException();
         }
+
+        void RaiseStepEvent(double x, double f, double sum)
+        {
+            if (OnStep != null)
+            {
+                IntegratorEventArgs args = new IntegratorEventArgs()
+                {
+                    X = x,
+                    F = f,
+                    Integr = sum
+                };
+                OnStep(this, args);
+            }
+        }
+        void RaiseFinishEvent(double sum)
+        {
+            if (OnFinish != null)
+            {
+                IntegratorEventArgs args = new IntegratorEventArgs()
+                {
+                    Integr = sum
+                };
+                OnFinish(this, args);
+            }
+        }
+
 
         public override string ToString()
         {
