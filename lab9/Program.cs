@@ -59,7 +59,7 @@ public class Program
             }
             return filesList;
         }
-        return null;
+        return new List<FileInfo>();
     }
 
     //Поиск дубликатов по содержимому
@@ -85,18 +85,22 @@ public class Program
                             fs2.Close();
                             continue;
                         }
+                        bool eq = true;
                         do
                         {
                             file1byte = fs1.ReadByte();
                             file2byte = fs2.ReadByte();
                         }
-                        while ((file1byte == file2byte) && (file1byte != -1));
+                        
+                        while ((eq =file1byte == file2byte) && (file1byte != -1));
+
                         fs1.Close();
                         fs2.Close();
+                        if (!eq) continue;
                         File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
                         list[j].Delete();
                         list.RemoveAt(j);
-                        j--; //гениально же, ну.
+                        j--;
                     }
                 }
         }
@@ -115,6 +119,7 @@ public class Program
                         File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
                         list[j].Delete();
                         list.Remove(list[j]);
+                        j--;
                     }
                 }
         }
@@ -129,11 +134,12 @@ public class Program
             if (list[i].Exists)
                 for (int j = i + 1; j < list.Count; j++)
                 {
-                    if (list[j].Exists && (list[i].Name == list[j].Name) && (list[i].CreationTime.Day == list[j].CreationTime.Day))
+                    if (list[j].Exists && (list[i].Name == list[j].Name) && (list[i].LastWriteTime.Day == list[j].LastWriteTime.Day))
                     {
                         File.AppendAllText("log.txt", "Удален файл: " + list[j].FullName + " На основе файла: " + list[i].FullName + "\n");
                         list[j].Delete();
                         list.Remove(list[j]);
+                        j--;
                     }
                 }
         }
@@ -148,7 +154,7 @@ public class Program
         {
             if (file.Exists)
             {
-                int day = file.CreationTime.Day;
+                int day = file.LastWriteTime.Day;
                 string subpath = path + "/" + day;
                 if (!Directory.Exists(subpath))
                 {
@@ -160,6 +166,7 @@ public class Program
                 file.MoveTo(subpath + file.Name, true);
             }
         }
+        DeleteEmptyFolders(path);
     }
 
     //Сортировка по неделям
@@ -169,7 +176,7 @@ public class Program
         {
             if (file.Exists)
             {
-                int week = file.CreationTime.DayOfYear / 7 + 1;
+                int week = file.LastWriteTime.DayOfYear / 7 + 1;
                 string subpath = path + "/" + week;
                 if (!Directory.Exists(subpath))
                 {
@@ -181,6 +188,7 @@ public class Program
                 file.MoveTo(subpath + file.Name, true);
             }
         }
+        DeleteEmptyFolders(path);
     }
 
     //Сортировка по месяцам
@@ -190,7 +198,7 @@ public class Program
         {
             if (file.Exists)
             {
-                int month = file.CreationTime.Month;
+                int month = file.LastWriteTime.Month;
                 string subpath = path + "/" + month;
                 if (!Directory.Exists(subpath))
                 {
@@ -202,6 +210,7 @@ public class Program
                 file.MoveTo(subpath + file.Name);
             }
         }
+        DeleteEmptyFolders(path);
     }
 
     public static void SortingByYear(List<FileInfo> list, string path)
@@ -210,7 +219,7 @@ public class Program
         {
             if (file.Exists)
             {
-                int Year = file.CreationTime.Year;
+                int Year = file.LastWriteTime.Year;
                 string subpath = path + "/" + Year;
                 if (!Directory.Exists(subpath))
                 {
@@ -222,6 +231,7 @@ public class Program
                 file.MoveTo(subpath + file.Name);
             }
         }
+        DeleteEmptyFolders(path);
     }
     /// 
     ///
@@ -231,19 +241,34 @@ public class Program
     public static void Main(string[] args)
     {
         File.AppendAllText("log.txt", "Начало работы программы \n\n");
-         string path = "C:/Users/Kerbix/Desktop/test";
+         string path = "C:/Users/Nikita/Desktop/test";
 
 
         //Добавление файлов в лист
         List<FileInfo> filesList = CreateListFiles(path);
-
-        //Вызов методов
-        PrintList(filesList);
-        SearchingDublicatesByteComparesing(filesList);
-        Console.WriteLine("После поиска\n");
-        PrintList(filesList);
-        DeleteEmptyFolders(path);
-
-        File.AppendAllText("log.txt", "Конец работы программы \n\n");
+        int choose;
+        do
+        {
+            Console.WriteLine("1.Побитовый поиск\n2.Поиск по имени и размеру\n3.Поиск по имени и дате");
+            Console.WriteLine("4.Сортировка по дням\n5.Сортировка по неделям\n6.Сортировка по месяцам\n7.Сортировка по годам");
+            choose = Console.ReadKey(true).KeyChar-'0';
+            CreateListFiles(path);
+            switch (choose)
+            {
+                case 0: break;
+                case 1: SearchingDublicatesByteComparesing(filesList);break;
+                case 2: SearchingDublicatesNameAndSize(filesList); break;
+                case 3: SearchingDublicatesNameAndDate(filesList); break;
+                case 4: SortingByDay(filesList, path); break;
+                case 5: SortingByWeek(filesList, path); break;
+                case 6: SortingByMonth(filesList, path); break;
+                case 7: SortingByYear(filesList, path); break;
+                default:break;
+            }
+            //Console.WriteLine("press a");
+            Console.WriteLine("-------------------------------------");
+            //Console.Clear();
+        } while (choose > 0);
+           
     }
 }

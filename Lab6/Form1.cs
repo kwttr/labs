@@ -27,7 +27,7 @@ namespace Lab6
         }
         static void PrintFile(double x)
         {
-            File.WriteAllText("C:/Users/Kerbix/Desktop/выфа/labs/Lab6/text.txt", Convert.ToString(x)+" ");
+            File.WriteAllText("C:/Users/Nikita/Desktop/labs/Lab6/text.txt", Convert.ToString(x)+" ");
         }
         void PrintLB(double x, double f, double sum)
         {
@@ -35,7 +35,7 @@ namespace Lab6
         }
         static void PrintFile(double x, double f,double sum)
         {
-            File.WriteAllText("C:/Users/Kerbix/Desktop/выфа/labs/Lab6/text.txt", Convert.ToString(x) + " " + Convert.ToString(f) + " " + Convert.ToString(sum));
+            File.AppendAllText("C:/Users/Nikita/Desktop/labs/Lab6/OnStep.txt", x + " " + f + " " + sum + "\n");
         }
         void DrawFunction(double x1, double x2, Series series, Equation equation)
         {
@@ -44,6 +44,12 @@ namespace Lab6
                 double y = equation.GetValue(i);
                 chart1.Series[0].Points.AddXY(i, (int)y);
             }
+        }
+        static void PrintBinaryFile(double x,double f,double sum)
+        {
+            BinaryWriter bw = new BinaryWriter(File.Open("C:/Users/Nikita/Desktop/labs/Lab6/bw.dat",FileMode.OpenOrCreate));
+            bw.Write(x + " "+f+" "+sum+"\n");
+
         }
         public Form1()
         {
@@ -65,14 +71,22 @@ namespace Lab6
         }
 
         private void Form1_Load(object sender, EventArgs e){}
-
+        private void OnIntegratorStep(object sender, IntegratorEventArgs args)
+        {
+            PrintFile(args.X,args.F,args.Integr);
+            PrintBinaryFile(args.X, args.F, args.Integr);
+        }
+        static void OnIntegratorFinish(object sender, IntegratorEventArgs args){
+             = args.Integr;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
             var equation = cbListEquations.SelectedItem as Equation;
             var integr = cbListIntegr.SelectedItem as Integrator;
-            integr.OnStep += new IntStepDelegate(PrintLB);
-            integr.OnStep += PrintFile;
+            integr.OnStep += OnIntegratorStep;
+            integr.OnFinish += OnIntegratorFinish;
+            
             if (equation != null)   
             {
                 if (equation is MonoEquation mono)

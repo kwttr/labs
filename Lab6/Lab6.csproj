@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="text.txt" />
+    <Content Include="OnStep.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
