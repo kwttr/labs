@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Lab6
 {
@@ -24,13 +26,31 @@ namespace Lab6
             //определяем ширину интервала:
             double h = (x2 - x1) / N;
             double sum = 0; //"накопитель" для значения интеграла
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             for (int i = 0; i < N; i++)
             {
+                Thread.Sleep(100);
                 sum += equation(x1 + i * h) * h;
                 RaiseStepEvent(x1+i, equation(x1+i), sum);
             }
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            int ThreadSum = ts.Milliseconds;
+            ThreadOnFinishCount(ThreadSum);
             RaiseFinishEvent(sum);
             return sum;
+        }
+        void ThreadOnFinishCount(int ThreadSum)
+        {
+            if (ThreadCount != null)
+            {
+                ThreadEventArgs args = new ThreadEventArgs()
+                {
+                    CalcTime = ThreadSum
+                };
+                ThreadCount(this, args);
+            }
         }
 
         public override double Integrate(Equation equation, double x1, double x2,double N)

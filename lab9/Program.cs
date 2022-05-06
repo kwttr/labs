@@ -1,7 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using Dropbox.Api.Files;
+using ExifLib;
+
 
 public class Program
 {
@@ -23,7 +29,7 @@ public class Program
     public static void DeleteEmptyFolders(string path)
     {
         DirectoryInfo dir = new DirectoryInfo(path);
-        foreach(var file in dir.GetDirectories("*.*",SearchOption.AllDirectories).Reverse()) //Нашел реверс, гениально х2
+        foreach (var file in dir.GetDirectories("*.*", SearchOption.AllDirectories).Reverse())
         {
             try
             {
@@ -91,8 +97,8 @@ public class Program
                             file1byte = fs1.ReadByte();
                             file2byte = fs2.ReadByte();
                         }
-                        
-                        while ((eq =file1byte == file2byte) && (file1byte != -1));
+
+                        while ((eq = file1byte == file2byte) && (file1byte != -1));
 
                         fs1.Close();
                         fs2.Close();
@@ -163,7 +169,7 @@ public class Program
                 }
                 subpath = path + "/" + day + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath + file.Name, true);
+                file.MoveTo(subpath + file.Name);          //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
             }
         }
         DeleteEmptyFolders(path);
@@ -185,7 +191,7 @@ public class Program
                 }
                 subpath = path + "/" + week + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath + file.Name, true);
+                file.MoveTo(subpath + file.Name);                   //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
             }
         }
         DeleteEmptyFolders(path);
@@ -233,6 +239,120 @@ public class Program
         }
         DeleteEmptyFolders(path);
     }
+
+    //добавление вотермарки
+    public static Graphics GdiBase(FileInfo file,ref Bitmap bitmap, out int imageWidth, out int imageHeight)
+    {
+            Image image = Image.FromFile(file.FullName);
+            imageWidth = image.Width;
+            imageHeight = image.Height;
+
+            bitmap = new Bitmap(imageWidth, imageHeight,
+                PixelFormat.Format24bppRgb);
+
+            bitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            Graphics graphics = Graphics.FromImage(bitmap);
+
+            graphics.DrawImage(image, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, imageWidth, imageHeight, GraphicsUnit.Pixel);
+        return graphics;
+    }
+
+    public static void SetText(List<FileInfo> files, string text,
+    string pathSave, string fontName = "arial")
+    {
+        string pathdir = pathSave + "/watermark";
+        DirectoryInfo dir = new DirectoryInfo(pathdir);
+        dir.Create();
+        foreach (FileInfo file in files)
+        {
+            // Поолучаем объект Graphics
+            Bitmap bitmap = null;
+            int imageWidth = 0, imageHeight = 0;
+
+            using (Graphics graphics = GdiBase(file, ref bitmap, out imageWidth, out imageHeight))
+            {
+                // Задаем качество рендеринга для картинки
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                // Подбираем размер шрифта, чтобы подпись полность помещалась на картинке
+                int[] fontSizes = new int[] { 16, 14, 12, 10, 8, 6, 4 };
+                Font font = null;
+                SizeF size = new SizeF();
+                for (int i = 0; i < 7; i++)
+                {
+                    font = new Font(fontName, fontSizes[i], FontStyle.Bold);
+                    size = graphics.MeasureString(text, font);
+
+                    if ((ushort)size.Width < (ushort)imageWidth)
+                        break;
+                }
+
+                // Добавляем смещение 5% относительно низа экрана и выравниваем по центру
+                int yPixelsFromBottom = (int)(imageHeight * 0.05);
+                float positionY = ((imageHeight -
+                            yPixelsFromBottom) - (size.Height / 2));
+                float centerX = (imageWidth / 2);
+
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+
+                // Полупрозрачная кисть черного цвета для обводки текста
+                SolidBrush brush2 = new SolidBrush(Color.FromArgb(152, 0, 0, 0));
+
+                graphics.DrawString(text,
+                    font,
+                    brush2,
+                    new PointF(centerX + 1, positionY + 1),
+                    stringFormat);
+
+                // Полупрозрачная кисть белого цвета для заливки текста
+                SolidBrush brush = new SolidBrush(
+                                Color.FromArgb(153, 255, 255, 255));
+
+                graphics.DrawString(text,
+                    font,
+                    brush,
+                    new PointF(centerX, positionY),
+                    stringFormat);
+
+                // Сохранить картинку
+                bitmap.Save(pathSave+file.Name,
+                    // Выбор формата для сохранения на основе MIME
+                    file.Extension == "png" ? ImageFormat.Png : ImageFormat.Jpeg);
+            }
+        }
+    }
+    public static GpsCoordinates GetCoordinates(string imageFileName)
+    {
+        using (var reader = new ExifReader(imageFileName))
+        {
+            Double[] latitude, longitude;
+            var latitudeRef = "";
+            var longitudeRef = "";
+
+            if (reader.GetTagValue(ExifTags.GPSLatitude, out latitude)
+                 && reader.GetTagValue(ExifTags.GPSLongitude, out longitude)
+                 && reader.GetTagValue(ExifTags.GPSLatitudeRef, out latitudeRef)
+                 && reader.GetTagValue(ExifTags.GPSLongitudeRef, out longitudeRef))
+            {
+                var longitudeTotal = longitude[0] + longitude[1] / 60 + longitude[2] / 3600;
+                var latitudeTotal = latitude[0] + latitude[1] / 60 + latitude[2] / 3600;
+
+                return new GpsCoordinates()
+                {
+                    Latitude = (latitudeRef == "N" ? 1 : -1) * latitudeTotal,
+                    Longitude = (longitudeRef == "E" ? 1 : -1) * longitudeTotal,
+                };
+            }
+
+            return new GpsCoordinates()
+            {
+                Latitude = 0,
+                Longitude = 0,
+            };
+        }
+    }
     /// 
     ///
     /// 
@@ -241,7 +361,7 @@ public class Program
     public static void Main(string[] args)
     {
         File.AppendAllText("log.txt", "Начало работы программы \n\n");
-         string path = "C:/Users/Nikita/Desktop/test";
+        string path = "C:/Users/Kerbix/Desktop/test";
 
 
         //Добавление файлов в лист
@@ -250,25 +370,25 @@ public class Program
         do
         {
             Console.WriteLine("1.Побитовый поиск\n2.Поиск по имени и размеру\n3.Поиск по имени и дате");
-            Console.WriteLine("4.Сортировка по дням\n5.Сортировка по неделям\n6.Сортировка по месяцам\n7.Сортировка по годам");
-            choose = Console.ReadKey(true).KeyChar-'0';
+            Console.WriteLine("4.Сортировка по дням\n5.Сортировка по неделям\n6.Сортировка по месяцам\n7.Сортировка по годам\n8.Добавить вотермарку");
+            choose = Console.ReadKey(true).KeyChar - '0';
             CreateListFiles(path);
             switch (choose)
             {
                 case 0: break;
-                case 1: SearchingDublicatesByteComparesing(filesList);break;
+                case 1: SearchingDublicatesByteComparesing(filesList); break;
                 case 2: SearchingDublicatesNameAndSize(filesList); break;
                 case 3: SearchingDublicatesNameAndDate(filesList); break;
                 case 4: SortingByDay(filesList, path); break;
                 case 5: SortingByWeek(filesList, path); break;
                 case 6: SortingByMonth(filesList, path); break;
                 case 7: SortingByYear(filesList, path); break;
-                default:break;
+                case 8: SetText(filesList,"WATERMARK",path,"arial");break;
+                case 9: FindGeoTag(); break;
+                default: break;
             }
-            //Console.WriteLine("press a");
             Console.WriteLine("-------------------------------------");
             //Console.Clear();
         } while (choose > 0);
-           
     }
 }

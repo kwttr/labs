@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Lab6.Integrator;
+using System.Threading;
 
 namespace Lab6
 {
@@ -27,15 +28,11 @@ namespace Lab6
         }
         static void PrintFile(double x)
         {
-            File.WriteAllText("C:/Users/Nikita/Desktop/labs/Lab6/text.txt", Convert.ToString(x)+" ");
-        }
-        void PrintLB(double x, double f, double sum)
-        {
-            lbOnStep.Text = lbOnStep.Text+Convert.ToString(x) + " " + Convert.ToString(f) + " " + Convert.ToString(sum)+"\n";
+            File.WriteAllText("C:/Users/Kerbix/Desktop/labs/Lab6/text.txt", Convert.ToString(x)+" ");
         }
         static void PrintFile(double x, double f,double sum)
         {
-            File.AppendAllText("C:/Users/Nikita/Desktop/labs/Lab6/OnStep.txt", x + " " + f + " " + sum + "\n");
+            File.AppendAllText("C:/Users/Kerbix/Desktop/labs/Lab6/OnStep.txt", x + " " + f + " " + sum + "\n");
         }
         void DrawFunction(double x1, double x2, Series series, Equation equation)
         {
@@ -47,8 +44,12 @@ namespace Lab6
         }
         static void PrintBinaryFile(double x,double f,double sum)
         {
-            BinaryWriter bw = new BinaryWriter(File.Open("C:/Users/Nikita/Desktop/labs/Lab6/bw.dat",FileMode.OpenOrCreate));
-            bw.Write(x + " "+f+" "+sum+"\n");
+            using (BinaryWriter bw = new BinaryWriter(File.Open("C:/Users/Kerbix/Desktop/labs/Lab6/bw.dat", FileMode.OpenOrCreate)))
+            {
+                bw.Seek(0, SeekOrigin.End);
+                bw.Write(x + " " + f + " " + sum + "\n");
+                bw.Close(); 
+            }
 
         }
         public Form1()
@@ -76,18 +77,30 @@ namespace Lab6
             PrintFile(args.X,args.F,args.Integr);
             PrintBinaryFile(args.X, args.F, args.Integr);
         }
-        static void OnIntegratorFinish(object sender, IntegratorEventArgs args){
-             = args.Integr;
+
+        void OnIntegratorFinish(object sender, IntegratorEventArgs args){
+            this.Text = Convert.ToString(args.Integr);
+            buttonDraw.Enabled = true;
+        }
+
+        void OnBlockButton(object sender, ButtonEventArgs args)
+        {
+            buttonDraw.Enabled = args.sw;
+        }
+        void OnThreadFinishCount(object sender, ThreadEventArgs args)
+        {
+            MessageBox.Show(Convert.ToString(args.CalcTime));
         }
         private void button1_Click(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
-            var equation = cbListEquations.SelectedItem as Equation;
-            var integr = cbListIntegr.SelectedItem as Integrator;
+            Equation equation = cbListEquations.SelectedItem as Equation;
+            Integrator integr = cbListIntegr.SelectedItem as Integrator;
+            integr.BlockButton += OnBlockButton;
             integr.OnStep += OnIntegratorStep;
             integr.OnFinish += OnIntegratorFinish;
-            
-            if (equation != null)   
+            integr.ThreadCount += OnThreadFinishCount;
+            if (equation != null)
             {
                 if (equation is MonoEquation mono)
                 {
@@ -111,11 +124,6 @@ namespace Lab6
                     ShowResult?.Invoke(s);
                 }
             }
-        }
-
-        private void button2_MouseClick(object sender, MouseEventArgs e)
-        {
-            chart1.Series[0].Points.Clear();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

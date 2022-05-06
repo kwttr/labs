@@ -52,9 +52,9 @@
     <Compile Include="YearTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lab6\Lab6.csproj">
+    <ProjectReference Include="..\..\Lab6\lab6.csproj">
       <Project>{2ce37fd5-f66f-41a1-ab6e-c15c31d2d529}</Project>
-      <Name>Lab6</Name>
+      <Name>lab6</Name>
     </ProjectReference>
     <ProjectReference Include="..\MathTaskClassLibrary\MathTaskClassLibrary.csproj">
       <Project>{521a052b-56dd-4b75-91c1-d382da2db3bc}</Project>

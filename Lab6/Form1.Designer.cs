@@ -53,7 +53,6 @@
             this.cbListDelegate = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbArea = new System.Windows.Forms.TextBox();
-            this.lbOnStep = new System.Windows.Forms.ListBox();
             this.cbListEquations = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
@@ -117,7 +116,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.buttonDraw, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 435);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 327);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -143,11 +142,10 @@
             this.flowLayoutPanel1.Controls.Add(this.cbListDelegate);
             this.flowLayoutPanel1.Controls.Add(this.label6);
             this.flowLayoutPanel1.Controls.Add(this.tbArea);
-            this.flowLayoutPanel1.Controls.Add(this.lbOnStep);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 21);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(205, 414);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(205, 306);
             this.flowLayoutPanel1.TabIndex = 4;
             // 
             // label1
@@ -305,14 +303,6 @@
             this.tbArea.Size = new System.Drawing.Size(202, 20);
             this.tbArea.TabIndex = 12;
             // 
-            // lbOnStep
-            // 
-            this.lbOnStep.FormattingEnabled = true;
-            this.lbOnStep.Location = new System.Drawing.Point(3, 291);
-            this.lbOnStep.Name = "lbOnStep";
-            this.lbOnStep.Size = new System.Drawing.Size(202, 95);
-            this.lbOnStep.TabIndex = 5;
-            // 
             // cbListEquations
             // 
             this.cbListEquations.Dock = System.Windows.Forms.DockStyle.Top;
@@ -369,7 +359,6 @@
         private System.Windows.Forms.ComboBox cbListDelegate;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textStep;
-        private System.Windows.Forms.ListBox lbOnStep;
     }
 }
 
