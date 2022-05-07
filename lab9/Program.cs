@@ -276,18 +276,19 @@ public class Program
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                 // Подбираем размер шрифта, чтобы подпись полность помещалась на картинке
-                int[] fontSizes = new int[] { 16, 14, 12, 10, 8, 6, 4 };
+                int fontSize = 2;
                 Font font = null;
                 SizeF size = new SizeF();
-                for (int i = 0; i < 7; i++)
+                while(size.Width<imageWidth)
                 {
-                    font = new Font(fontName, fontSizes[i], FontStyle.Bold);
+                    font = new Font(fontName, fontSize, FontStyle.Bold);
                     size = graphics.MeasureString(text, font);
-
-                    if ((ushort)size.Width < (ushort)imageWidth)
-                        break;
+                    fontSize += 4;
+                    if ((ushort)size.Width > (ushort)imageWidth) break;
                 }
-
+                font = new Font(fontName, fontSize - 4, FontStyle.Bold);
+                //text
+                text = "MisterBlokCorporated";
                 // Добавляем смещение 5% относительно низа экрана и выравниваем по центру
                 int yPixelsFromBottom = (int)(imageHeight * 0.05);
                 float positionY = ((imageHeight -
@@ -298,7 +299,7 @@ public class Program
                 stringFormat.Alignment = StringAlignment.Center;
 
                 // Полупрозрачная кисть черного цвета для обводки текста
-                SolidBrush brush2 = new SolidBrush(Color.FromArgb(152, 0, 0, 0));
+                SolidBrush brush2 = new SolidBrush(Color.FromArgb(50, 0, 0,0));
 
                 graphics.DrawString(text,
                     font,
@@ -308,7 +309,7 @@ public class Program
 
                 // Полупрозрачная кисть белого цвета для заливки текста
                 SolidBrush brush = new SolidBrush(
-                                Color.FromArgb(153, 255, 255, 255));
+                                Color.FromArgb(50, 255, 255, 255));
 
                 graphics.DrawString(text,
                     font,
@@ -317,51 +318,59 @@ public class Program
                     stringFormat);
 
                 // Сохранить картинку
-                bitmap.Save(pathSave+file.Name,
+                bitmap.Save(pathdir+"/"+file.Name,
                     // Выбор формата для сохранения на основе MIME
                     file.Extension == "png" ? ImageFormat.Png : ImageFormat.Jpeg);
+                bitmap.Dispose();
+                graphics.Dispose();
+
             }
         }
     }
-    public static GpsCoordinates GetCoordinates(string imageFileName)
+    //public static GpsCoordinates GetCoordinates(string imageFileName)
+    //{
+    //    using (var reader = new ExifReader(imageFileName))
+    //    {
+    //        Double[] latitude, longitude;
+    //        var latitudeRef = "";
+    //        var longitudeRef = "";
+
+    //        if (reader.GetTagValue(ExifTags.GPSLatitude, out latitude)
+    //             && reader.GetTagValue(ExifTags.GPSLongitude, out longitude)
+    //             && reader.GetTagValue(ExifTags.GPSLatitudeRef, out latitudeRef)
+    //             && reader.GetTagValue(ExifTags.GPSLongitudeRef, out longitudeRef))
+    //        {
+    //            var longitudeTotal = longitude[0] + longitude[1] / 60 + longitude[2] / 3600;
+    //            var latitudeTotal = latitude[0] + latitude[1] / 60 + latitude[2] / 3600;
+                
+                
+    //            return new GpsCoordinates()
+    //            { 
+                    
+    //                Latitude = (latitudeRef == "N" ? 1 : -1) * latitudeTotal,
+    //                Longitude = (longitudeRef == "E" ? 1 : -1) * longitudeTotal,
+    //            };
+    //        }
+
+    //        return new GpsCoordinates()
+    //        {
+    //            Latitude = 0,
+    //            Longitude = 0,
+    //        };
+    //    }
+    //}//DROPBOX.API для GpsCoordinates нужен
+    public static void GetGPS(List<FileInfo> files)
     {
-        using (var reader = new ExifReader(imageFileName))
+        foreach (FileInfo file in files)
         {
-            Double[] latitude, longitude;
-            var latitudeRef = "";
-            var longitudeRef = "";
-
-            if (reader.GetTagValue(ExifTags.GPSLatitude, out latitude)
-                 && reader.GetTagValue(ExifTags.GPSLongitude, out longitude)
-                 && reader.GetTagValue(ExifTags.GPSLatitudeRef, out latitudeRef)
-                 && reader.GetTagValue(ExifTags.GPSLongitudeRef, out longitudeRef))
-            {
-                var longitudeTotal = longitude[0] + longitude[1] / 60 + longitude[2] / 3600;
-                var latitudeTotal = latitude[0] + latitude[1] / 60 + latitude[2] / 3600;
-
-                return new GpsCoordinates()
-                {
-                    Latitude = (latitudeRef == "N" ? 1 : -1) * latitudeTotal,
-                    Longitude = (longitudeRef == "E" ? 1 : -1) * longitudeTotal,
-                };
-            }
-
-            return new GpsCoordinates()
-            {
-                Latitude = 0,
-                Longitude = 0,
-            };
+            var reader = new ExifReader(file.FullName);
         }
     }
-    /// 
-    ///
-    /// 
-    /// 
 
     public static void Main(string[] args)
     {
         File.AppendAllText("log.txt", "Начало работы программы \n\n");
-        string path = "C:/Users/Kerbix/Desktop/test";
+        string path = "C:/Users/Nikita/Desktop/test";
 
 
         //Добавление файлов в лист
@@ -384,7 +393,7 @@ public class Program
                 case 6: SortingByMonth(filesList, path); break;
                 case 7: SortingByYear(filesList, path); break;
                 case 8: SetText(filesList,"WATERMARK",path,"arial");break;
-                case 9: FindGeoTag(); break;
+            //    case 9: FindGeoTag(); break;
                 default: break;
             }
             Console.WriteLine("-------------------------------------");

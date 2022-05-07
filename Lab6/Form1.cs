@@ -28,11 +28,11 @@ namespace Lab6
         }
         static void PrintFile(double x)
         {
-            File.WriteAllText("C:/Users/Kerbix/Desktop/labs/Lab6/text.txt", Convert.ToString(x)+" ");
+            File.WriteAllText("C:/Users/Nikita/Desktop/labs/Lab6/text.txt", Convert.ToString(x)+" ");
         }
         static void PrintFile(double x, double f,double sum)
         {
-            File.AppendAllText("C:/Users/Kerbix/Desktop/labs/Lab6/OnStep.txt", x + " " + f + " " + sum + "\n");
+            File.AppendAllText("C:/Users/Nikita/Desktop/labs/Lab6/OnStep.txt", x + " " + f + " " + sum + "\n");
         }
         void DrawFunction(double x1, double x2, Series series, Equation equation)
         {
@@ -44,7 +44,7 @@ namespace Lab6
         }
         static void PrintBinaryFile(double x,double f,double sum)
         {
-            using (BinaryWriter bw = new BinaryWriter(File.Open("C:/Users/Kerbix/Desktop/labs/Lab6/bw.dat", FileMode.OpenOrCreate)))
+            using (BinaryWriter bw = new BinaryWriter(File.Open("C:/Users/Nikita/Desktop/labs/Lab6/bw.dat", FileMode.OpenOrCreate)))
             {
                 bw.Seek(0, SeekOrigin.End);
                 bw.Write(x + " " + f + " " + sum + "\n");
@@ -96,10 +96,10 @@ namespace Lab6
             chart1.Series[0].Points.Clear();
             Equation equation = cbListEquations.SelectedItem as Equation;
             Integrator integr = cbListIntegr.SelectedItem as Integrator;
-            integr.BlockButton += OnBlockButton;
-            integr.OnStep += OnIntegratorStep;
-            integr.OnFinish += OnIntegratorFinish;
-            integr.ThreadCount += OnThreadFinishCount;
+            if (integr.BlockButton == null) integr.BlockButton += OnBlockButton;
+            if (integr.OnStep == null) integr.OnStep += OnIntegratorStep;
+            if (integr.OnFinish == null) integr.OnFinish += OnIntegratorFinish;
+            if (integr.ThreadCount == null) integr.ThreadCount += OnThreadFinishCount;
             if (equation != null)
             {
                 if (equation is MonoEquation mono)
