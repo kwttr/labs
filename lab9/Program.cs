@@ -169,7 +169,14 @@ public class Program
                 }
                 subpath = path + "/" + day + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
+                try
+                {
                 file.MoveTo(subpath + file.Name);          //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
+                }
+                catch (Exception)
+                {
+                    file.MoveTo(subpath + file.Name + "1");
+                }
             }
         }
         DeleteEmptyFolders(path);
@@ -191,7 +198,14 @@ public class Program
                 }
                 subpath = path + "/" + week + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath + file.Name);                   //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
+                try
+                {
+                    file.MoveTo(subpath + file.Name);          //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
+                }
+                catch (Exception)
+                {
+                    file.MoveTo(subpath + file.Name + "1");
+                }
             }
         }
         DeleteEmptyFolders(path);
@@ -213,7 +227,14 @@ public class Program
                 }
                 subpath = path + "/" + month + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath + file.Name);
+                try
+                {
+                    file.MoveTo(subpath + file.Name);          //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
+                }
+                catch (Exception)
+                {
+                    file.MoveTo(subpath + file.Name + "1");
+                }
             }
         }
         DeleteEmptyFolders(path);
@@ -234,16 +255,24 @@ public class Program
                 }
                 subpath = path + "/" + Year + "/";
                 File.AppendAllText("log.txt", "Перемещен файл: " + file.FullName + "\n");
-                file.MoveTo(subpath + file.Name);
+                try
+                {
+                    file.MoveTo(subpath + file.Name);          //Убрал значение true, что перезаписывало файл в .NET 6.0, в NETframework нет необходимости. Не буду даже проверять работает или нет.
+                }
+                catch (Exception)
+                {
+                    file.MoveTo(subpath + file.Name + "1");
+                }
             }
         }
         DeleteEmptyFolders(path);
     }
 
     //добавление вотермарки
-    public static Graphics GdiBase(FileInfo file,ref Bitmap bitmap, out int imageWidth, out int imageHeight)
+    public static Graphics GdiBase(FileInfo file, ref Bitmap bitmap, out int imageWidth, out int imageHeight)
     {
-            Image image = Image.FromFile(file.FullName);
+        using (Image image = Image.FromFile(file.FullName))
+        {
             imageWidth = image.Width;
             imageHeight = image.Height;
 
@@ -255,7 +284,8 @@ public class Program
             Graphics graphics = Graphics.FromImage(bitmap);
 
             graphics.DrawImage(image, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, imageWidth, imageHeight, GraphicsUnit.Pixel);
-        return graphics;
+            return graphics;
+        }
     }
 
     public static void SetText(List<FileInfo> files, string text,
@@ -272,58 +302,66 @@ public class Program
 
             using (Graphics graphics = GdiBase(file, ref bitmap, out imageWidth, out imageHeight))
             {
-                // Задаем качество рендеринга для картинки
-                graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-                // Подбираем размер шрифта, чтобы подпись полность помещалась на картинке
-                int fontSize = 2;
-                Font font = null;
-                SizeF size = new SizeF();
-                while(size.Width<imageWidth)
+                using (bitmap)
                 {
-                    font = new Font(fontName, fontSize, FontStyle.Bold);
-                    size = graphics.MeasureString(text, font);
-                    fontSize += 4;
-                    if ((ushort)size.Width > (ushort)imageWidth) break;
+                    // Задаем качество рендеринга для картинки
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                    // Подбираем размер шрифта, чтобы подпись полность помещалась на картинке
+                    Font font = null;
+                    SizeF size = new SizeF();
+                    double razn = 0;
+                    int i = 0;
+                    while (i < 3)
+                    {
+                        i++;
+                        int fontSize = 2;
+                        while (size.Width < imageWidth)
+                        {
+                            font = new Font(fontName, fontSize, FontStyle.Bold);
+                            size = graphics.MeasureString(text, font);
+                            fontSize += 1;
+                            if ((ushort)size.Width > (ushort)imageWidth) break;
+                        }
+                        fontSize /= 3;
+                        font = new Font(fontName, fontSize, FontStyle.Bold);
+                        size = graphics.MeasureString(text, font);
+                        //text
+                        text = "MisterBlok";
+                        // Добавляем смещение 5% относительно низа экрана и выравниваем по центру
+                        int yPixelsFromBottom = (int)(imageHeight * (0.15 + razn));
+                        razn += 0.3;
+                        float positionY = ((imageHeight -
+                                    yPixelsFromBottom) - (size.Height / 2));
+                        float centerX = size.Width;
+
+                        StringFormat stringFormat = new StringFormat();
+                        stringFormat.Alignment = StringAlignment.Far;
+
+                        // Полупрозрачная кисть черного цвета для обводки текста
+                        SolidBrush brush2 = new SolidBrush(Color.FromArgb(100, 0, 0, 0));
+
+                        graphics.DrawString(text,
+                            font,
+                            brush2,
+                            new PointF(centerX + 1, positionY + 1),
+                            stringFormat);
+
+                        // Полупрозрачная кисть белого цвета для заливки текста
+                        SolidBrush brush = new SolidBrush(
+                                        Color.FromArgb(100, 255, 255, 255));
+
+                        graphics.DrawString(text,
+                            font,
+                            brush,
+                            new PointF(centerX, positionY),
+                            stringFormat);
+                    }
+                    // Сохранить картинку
+                    bitmap.Save(pathdir + "/" + file.Name,
+                        // Выбор формата для сохранения на основе MIME
+                        file.Extension == "png" ? ImageFormat.Png : ImageFormat.Jpeg);
                 }
-                font = new Font(fontName, fontSize - 4, FontStyle.Bold);
-                //text
-                text = "MisterBlokCorporated";
-                // Добавляем смещение 5% относительно низа экрана и выравниваем по центру
-                int yPixelsFromBottom = (int)(imageHeight * 0.05);
-                float positionY = ((imageHeight -
-                            yPixelsFromBottom) - (size.Height / 2));
-                float centerX = (imageWidth / 2);
-
-                StringFormat stringFormat = new StringFormat();
-                stringFormat.Alignment = StringAlignment.Center;
-
-                // Полупрозрачная кисть черного цвета для обводки текста
-                SolidBrush brush2 = new SolidBrush(Color.FromArgb(50, 0, 0,0));
-
-                graphics.DrawString(text,
-                    font,
-                    brush2,
-                    new PointF(centerX + 1, positionY + 1),
-                    stringFormat);
-
-                // Полупрозрачная кисть белого цвета для заливки текста
-                SolidBrush brush = new SolidBrush(
-                                Color.FromArgb(50, 255, 255, 255));
-
-                graphics.DrawString(text,
-                    font,
-                    brush,
-                    new PointF(centerX, positionY),
-                    stringFormat);
-
-                // Сохранить картинку
-                bitmap.Save(pathdir+"/"+file.Name,
-                    // Выбор формата для сохранения на основе MIME
-                    file.Extension == "png" ? ImageFormat.Png : ImageFormat.Jpeg);
-                bitmap.Dispose();
-                graphics.Dispose();
-
             }
         }
     }
@@ -342,11 +380,11 @@ public class Program
     //        {
     //            var longitudeTotal = longitude[0] + longitude[1] / 60 + longitude[2] / 3600;
     //            var latitudeTotal = latitude[0] + latitude[1] / 60 + latitude[2] / 3600;
-                
-                
+
+
     //            return new GpsCoordinates()
     //            { 
-                    
+
     //                Latitude = (latitudeRef == "N" ? 1 : -1) * latitudeTotal,
     //                Longitude = (longitudeRef == "E" ? 1 : -1) * longitudeTotal,
     //            };
@@ -392,8 +430,8 @@ public class Program
                 case 5: SortingByWeek(filesList, path); break;
                 case 6: SortingByMonth(filesList, path); break;
                 case 7: SortingByYear(filesList, path); break;
-                case 8: SetText(filesList,"WATERMARK",path,"arial");break;
-            //    case 9: FindGeoTag(); break;
+                case 8: SetText(filesList, "WATERMARK", path, "arial"); break;
+                //    case 9: FindGeoTag(); break;
                 default: break;
             }
             Console.WriteLine("-------------------------------------");
