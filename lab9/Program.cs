@@ -296,6 +296,7 @@ public class Program
         dir.Create();
         foreach (FileInfo file in files)
         {
+            if (file.Name.Contains("watermark")) continue;
             // Поолучаем объект Graphics
             Bitmap bitmap = null;
             int imageWidth = 0, imageHeight = 0;
@@ -308,57 +309,64 @@ public class Program
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                     // Подбираем размер шрифта, чтобы подпись полность помещалась на картинке
-                    Font font = null;
-                    SizeF size = new SizeF();
                     double razn = 0;
                     int i = 0;
-                    while (i < 3)
+                    Font font = null;
+                    SizeF size = new SizeF();
+                    int fontSize = 2;
+                    //шрифт раздвигается полностью на экран, потом делится на 3, чтобы текст влезал ровно 3 раза.
+                    while (size.Width < imageWidth)
                     {
-                        i++;
-                        int fontSize = 2;
-                        while (size.Width < imageWidth)
-                        {
-                            font = new Font(fontName, fontSize, FontStyle.Bold);
-                            size = graphics.MeasureString(text, font);
-                            fontSize += 1;
-                            if ((ushort)size.Width > (ushort)imageWidth) break;
-                        }
-                        fontSize /= 3;
                         font = new Font(fontName, fontSize, FontStyle.Bold);
                         size = graphics.MeasureString(text, font);
-                        //text
-                        text = "MisterBlok";
-                        // Добавляем смещение 5% относительно низа экрана и выравниваем по центру
-                        int yPixelsFromBottom = (int)(imageHeight * (0.15 + razn));
-                        razn += 0.3;
+                        fontSize += 1;
+                        if ((ushort)size.Width > (ushort)imageWidth / 3) break;
+                    }
+                    font = new Font(fontName, fontSize, FontStyle.Bold);
+                    size = graphics.MeasureString(text, font);
+                    //text
+                    text = "MisterBlok";
+                    while (i < 5)
+                    {
+
+                        // Добавляем смещение 15% относительно низа экрана, потом добавляется разница.
+                        int yPixelsFromBottom = (int)(imageHeight * (0.1 + razn));
+                        razn += 0.2;
                         float positionY = ((imageHeight -
                                     yPixelsFromBottom) - (size.Height / 2));
-                        float centerX = size.Width;
+                        float positionX=-size.Width/5;
 
                         StringFormat stringFormat = new StringFormat();
                         stringFormat.Alignment = StringAlignment.Far;
 
+                        // Полупрозрачная кисть белого цвета для заливки текста
+                        SolidBrush brush = new SolidBrush(
+                Color.FromArgb(100, 255, 255, 255));
+
                         // Полупрозрачная кисть черного цвета для обводки текста
                         SolidBrush brush2 = new SolidBrush(Color.FromArgb(100, 0, 0, 0));
 
-                        graphics.DrawString(text,
-                            font,
-                            brush2,
-                            new PointF(centerX + 1, positionY + 1),
-                            stringFormat);
+                        int j = 0;
+                        while (j < 3){
+                            positionX += size.Width;
 
-                        // Полупрозрачная кисть белого цвета для заливки текста
-                        SolidBrush brush = new SolidBrush(
-                                        Color.FromArgb(100, 255, 255, 255));
+                            graphics.DrawString(text,
+                                font,
+                                brush2,
+                                new PointF(positionX + 1, positionY + 1),
+                                stringFormat);
 
-                        graphics.DrawString(text,
-                            font,
-                            brush,
-                            new PointF(centerX, positionY),
-                            stringFormat);
+                            graphics.DrawString(text,
+                                font,
+                                brush,
+                                new PointF(positionX, positionY),
+                                stringFormat);
+                            j++;
+                        }
+                        i++;
                     }
                     // Сохранить картинку
-                    bitmap.Save(pathdir + "/" + file.Name,
+                    bitmap.Save(pathdir + "/" + "watermark"+file.Name,
                         // Выбор формата для сохранения на основе MIME
                         file.Extension == "png" ? ImageFormat.Png : ImageFormat.Jpeg);
                 }
@@ -408,7 +416,7 @@ public class Program
     public static void Main(string[] args)
     {
         File.AppendAllText("log.txt", "Начало работы программы \n\n");
-        string path = "C:/Users/Nikita/Desktop/test";
+        string path = "C:/Users/Kerbix/Desktop/test";
 
 
         //Добавление файлов в лист
