@@ -5,24 +5,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Dropbox.Api.Files;
-using ExifLib;
 
 
 public class Program
 {
-    //Это какое-то логирование, которое я не понял как делать
-    //public void Configure(IApplicationBuilder app, ILogger<Program> logger)
-    //{
-    //    app.Run(async (context) =>
-    //    {
-    //        logger.LogInformation("Processing request{0}", context.Request.Path);
-    //        await context.Response.WriteAsync("Hello World!");
-    //    });
-    //}
-    //public static void Comparising(List<FileInfo> list,FileInfo f)
-    //{
-    //}
 
 
     //Удаление пустых папок
@@ -373,51 +359,65 @@ public class Program
             }
         }
     }
-    //public static GpsCoordinates GetCoordinates(string imageFileName)
-    //{
-    //    using (var reader = new ExifReader(imageFileName))
-    //    {
-    //        Double[] latitude, longitude;
-    //        var latitudeRef = "";
-    //        var longitudeRef = "";
 
-    //        if (reader.GetTagValue(ExifTags.GPSLatitude, out latitude)
-    //             && reader.GetTagValue(ExifTags.GPSLongitude, out longitude)
-    //             && reader.GetTagValue(ExifTags.GPSLatitudeRef, out latitudeRef)
-    //             && reader.GetTagValue(ExifTags.GPSLongitudeRef, out longitudeRef))
-    //        {
-    //            var longitudeTotal = longitude[0] + longitude[1] / 60 + longitude[2] / 3600;
-    //            var latitudeTotal = latitude[0] + latitude[1] / 60 + latitude[2] / 3600;
-
-
-    //            return new GpsCoordinates()
-    //            { 
-
-    //                Latitude = (latitudeRef == "N" ? 1 : -1) * latitudeTotal,
-    //                Longitude = (longitudeRef == "E" ? 1 : -1) * longitudeTotal,
-    //            };
-    //        }
-
-    //        return new GpsCoordinates()
-    //        {
-    //            Latitude = 0,
-    //            Longitude = 0,
-    //        };
-    //    }
-    //}//DROPBOX.API для GpsCoordinates нужен
-    public static void GetGPS(List<FileInfo> files)
+    public static void SortGeoTag(List<FileInfo> files,string path)
     {
         foreach (FileInfo file in files)
         {
-            var reader = new ExifReader(file.FullName);
+            if (file.Extension == ".jpg" || file.Extension == ".jpeg")
+            {
+                try
+                {
+                    Image image = new Bitmap(file.FullName);
+
+                    string gpsLatitudeRef = BitConverter.ToChar(image.GetPropertyItem(1).Value, 0).ToString();
+                    string latitude = DecodeRational64u(image.GetPropertyItem(2));
+                    string gpsLongitudeRef = BitConverter.ToChar(image.GetPropertyItem(3).Value, 0).ToString();
+                    string longitude = DecodeRational64u(image.GetPropertyItem(4));
+                    Console.WriteLine("{0}\t{1} {2}, {3} {4}", file, gpsLatitudeRef, latitude, gpsLongitudeRef, longitude);
+                    //Здесь создание папки для города
+                }
+                catch
+                {
+                    Console.WriteLine("Фото не обрабатывается");
+                }
+            }
+            else
+            {
+                string unkpath = path + "/unknown";
+                if (!Directory.Exists(unkpath)) Directory.CreateDirectory(unkpath);
+                    file.MoveTo(unkpath+"/"+file.Name);
+            }
+
         }
+    }
+    private static string DecodeRational64u(System.Drawing.Imaging.PropertyItem propertyItem)
+    {
+        uint dN = BitConverter.ToUInt32(propertyItem.Value, 0);
+        uint dD = BitConverter.ToUInt32(propertyItem.Value, 4);
+        uint mN = BitConverter.ToUInt32(propertyItem.Value, 8);
+        uint mD = BitConverter.ToUInt32(propertyItem.Value, 12);
+        uint sN = BitConverter.ToUInt32(propertyItem.Value, 16);
+        uint sD = BitConverter.ToUInt32(propertyItem.Value, 20);
+
+        decimal deg;
+        decimal min;
+        decimal sec;
+        // Found some examples where you could get a zero denominator and no one likes to devide by zero
+        if (dD > 0) { deg = (decimal)dN / dD; } else { deg = dN; }
+        if (mD > 0) { min = (decimal)mN / mD; } else { min = mN; }
+        if (sD > 0) { sec = (decimal)sN / sD; } else { sec = sN; }
+
+        if (sec == 0) return string.Format("{0}° {1:0.###}'", deg, min);
+        else return string.Format("{0}° {1:0}' {2:0.#}\"", deg, min, sec);
     }
 
     public static void Main(string[] args)
     {
         File.AppendAllText("log.txt", "Начало работы программы \n\n");
-        string path = "C:/Users/Kerbix/Desktop/test";
 
+        Console.WriteLine("Введите путь к папке");
+        string path = Console.ReadLine();
 
         //Добавление файлов в лист
         List<FileInfo> filesList = CreateListFiles(path);
@@ -425,7 +425,7 @@ public class Program
         do
         {
             Console.WriteLine("1.Побитовый поиск\n2.Поиск по имени и размеру\n3.Поиск по имени и дате");
-            Console.WriteLine("4.Сортировка по дням\n5.Сортировка по неделям\n6.Сортировка по месяцам\n7.Сортировка по годам\n8.Добавить вотермарку");
+            Console.WriteLine("4.Сортировка по дням\n5.Сортировка по неделям\n6.Сортировка по месяцам\n7.Сортировка по годам\n8.Добавить вотермарку\n9.Сортировать по геотэгу");
             choose = Console.ReadKey(true).KeyChar - '0';
             CreateListFiles(path);
             switch (choose)
@@ -439,7 +439,7 @@ public class Program
                 case 6: SortingByMonth(filesList, path); break;
                 case 7: SortingByYear(filesList, path); break;
                 case 8: SetText(filesList, "WATERMARK", path, "arial"); break;
-                //    case 9: FindGeoTag(); break;
+                case 9: SortGeoTag(filesList, path); break;
                 default: break;
             }
             Console.WriteLine("-------------------------------------");
