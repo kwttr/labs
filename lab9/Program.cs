@@ -6,7 +6,22 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
-
+public class City
+{
+    public double latitude;
+    public double longitude;
+    public string gpsLatitudeRef;
+    public string gpsLongitudeRef;
+    public string Name;
+    public City(string latitudeRef, double latitude,string longitudeReg,double longitude,string CityName)
+    {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.gpsLatitudeRef = latitudeRef;
+        this.gpsLongitudeRef = longitudeReg;
+        Name = CityName;
+    }
+}
 public class Program
 {
 
@@ -362,26 +377,57 @@ public class Program
 
     public static void SortGeoTag(List<FileInfo> files,string path)
     {
+        //Инициализация массива городов (да, именно здесь)
+        City Novosibirsk = new City("N",55.01464,"E",82.93167,"Novosibirsk");
+        City Moscow = new City("N", 55.77657, "E", 37.70508,"Moscow");
+        City Vladivostok = new City("N", 43.17376, "E", 131.99841,"Vladivostok");
+
+        City[] Cities = new City[3] {Novosibirsk,Moscow,Vladivostok};
+
         foreach (FileInfo file in files)
         {
             if (file.Extension == ".jpg" || file.Extension == ".jpeg")
             {
+                Image image = new Bitmap(file.FullName);
                 try
                 {
-                    Image image = new Bitmap(file.FullName);
+                    //Берем метаданные для обработки
+                    string gpsLatitudeRef = BitConverter.ToChar(image.GetPropertyItem(1).Value, 0).ToString(); //Северная или южная широта
+                    double latitude = DecodeRational64u(image.GetPropertyItem(2));                             
+                    string gpsLongitudeRef = BitConverter.ToChar(image.GetPropertyItem(3).Value, 0).ToString();//Клятая западная долгота или наша православная восточная долгота
+                    double longitude = DecodeRational64u(image.GetPropertyItem(4));
+                    //Console.WriteLine("{0}\t{1} {2}, {3} {4}", file, gpsLatitudeRef, latitude, gpsLongitudeRef, longitude);
 
-                    string gpsLatitudeRef = BitConverter.ToChar(image.GetPropertyItem(1).Value, 0).ToString();
-                    string latitude = DecodeRational64u(image.GetPropertyItem(2));
-                    string gpsLongitudeRef = BitConverter.ToChar(image.GetPropertyItem(3).Value, 0).ToString();
-                    string longitude = DecodeRational64u(image.GetPropertyItem(4));
-                    Console.WriteLine("{0}\t{1} {2}, {3} {4}", file, gpsLatitudeRef, latitude, gpsLongitudeRef, longitude);
-                    //Здесь создание папки для города
+                    //Ищем среди всего массива городов самый приближенный
+                    double difference = Math.Abs(Convert.ToDouble(latitude) - Cities[0].latitude) + Math.Abs(Convert.ToDouble(longitude) - Cities[0].longitude);
+                    string CityName = Cities[0].Name;
+
+                    foreach (City city in Cities)
+                    {
+                        if (Math.Abs(Convert.ToDouble(latitude) - city.latitude) + Math.Abs(Convert.ToDouble(longitude) - city.longitude) < difference)
+                        {
+                            difference = Math.Abs(Convert.ToDouble(latitude) - city.latitude) + Math.Abs(Convert.ToDouble(longitude) - city.longitude);
+                            CityName = city.Name;
+                        }
+                    }
+
+                    //Перемещаем в папку города
+                    image.Dispose();
+                    string cityPath = path + "/" + CityName;
+                    if(!Directory.Exists(cityPath)) Directory.CreateDirectory(cityPath);
+                    file.MoveTo(cityPath + "/" + file.Name);
                 }
+                //При любой ошибке (отсутствуют метаданные или др.) кидаем в папку unknown
                 catch
                 {
+                    image.Dispose();
                     Console.WriteLine("Фото не обрабатывается");
+                    string unkpath = path + "/unknown";
+                    if (!Directory.Exists(unkpath)) Directory.CreateDirectory(unkpath);
+                    file.MoveTo(unkpath + "/" + file.Name);
                 }
             }
+            //Если файл не jpg/jpeg картинка (можно добавить и остальные форматы, которые обрабатывают метаданные, но это лишняя морока) кидает в папку unknown
             else
             {
                 string unkpath = path + "/unknown";
@@ -391,25 +437,34 @@ public class Program
 
         }
     }
-    private static string DecodeRational64u(System.Drawing.Imaging.PropertyItem propertyItem)
+
+
+    public static double DecodeRational64u(PropertyItem propertyItem)
     {
-        uint dN = BitConverter.ToUInt32(propertyItem.Value, 0);
-        uint dD = BitConverter.ToUInt32(propertyItem.Value, 4);
-        uint mN = BitConverter.ToUInt32(propertyItem.Value, 8);
-        uint mD = BitConverter.ToUInt32(propertyItem.Value, 12);
-        uint sN = BitConverter.ToUInt32(propertyItem.Value, 16);
-        uint sD = BitConverter.ToUInt32(propertyItem.Value, 20);
+        uint dN = BitConverter.ToUInt32(propertyItem.Value, 0);      //Числитель градусов
+        uint dD = BitConverter.ToUInt32(propertyItem.Value, 4);      //Знаменатель градусов
+        uint mN = BitConverter.ToUInt32(propertyItem.Value, 8);      //Числитель минут
+        uint mD = BitConverter.ToUInt32(propertyItem.Value, 12);     //Знаменатель минут
+        uint sN = BitConverter.ToUInt32(propertyItem.Value, 16);     //Числитель секунд
+        uint sD = BitConverter.ToUInt32(propertyItem.Value, 20);     //Знаменатель секунд
 
         decimal deg;
         decimal min;
         decimal sec;
-        // Found some examples where you could get a zero denominator and no one likes to devide by zero
+        // Found some examples where you could get a zero denominator and no one likes to devide by zero || че пендос несет непонятно
         if (dD > 0) { deg = (decimal)dN / dD; } else { deg = dN; }
         if (mD > 0) { min = (decimal)mN / mD; } else { min = mN; }
         if (sD > 0) { sec = (decimal)sN / sD; } else { sec = sN; }
+        return (double)(deg + min / 100 + sec / 10000);
+    }
 
-        if (sec == 0) return string.Format("{0}° {1:0.###}'", deg, min);
-        else return string.Format("{0}° {1:0}' {2:0.#}\"", deg, min, sec);
+    //Кодирование в экзиф, но это не очень надо в принципе, но в теории... ?????? не уверен. В текущий момент не используется.
+    private static byte[] FloatToExifGps(int degrees, int minutes, int seconds)
+    {
+        var secBytes = BitConverter.GetBytes(seconds);
+        var secDivisor = BitConverter.GetBytes(100);
+        byte[] rv = { (byte)degrees, 0, 0, 0, 1, 0, 0, 0, (byte)minutes, 0, 0, 0, 1, 0, 0, 0, secBytes[0], secBytes[1], 0, 0, secDivisor[0], 0, 0, 0 };
+        return rv;
     }
 
     public static void Main(string[] args)
