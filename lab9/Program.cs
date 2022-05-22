@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
+//Класс городов
 public class City
 {
     public double latitude;
@@ -17,11 +18,12 @@ public class City
     {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.gpsLatitudeRef = latitudeRef;
-        this.gpsLongitudeRef = longitudeReg;
+        gpsLatitudeRef = latitudeRef;
+        gpsLongitudeRef = longitudeReg;
         Name = CityName;
     }
 }
+
 public class Program
 {
 
@@ -330,7 +332,7 @@ public class Program
                     while (i < 5)
                     {
 
-                        // Добавляем смещение 15% относительно низа экрана, потом добавляется разница.
+                        // Добавляем смещение относительно низа экрана.
                         int yPixelsFromBottom = (int)(imageHeight * (0.1 + razn));
                         razn += 0.2;
                         float positionY = ((imageHeight -
@@ -377,10 +379,10 @@ public class Program
 
     public static void SortGeoTag(List<FileInfo> files,string path)
     {
-        //Инициализация массива городов (да, именно здесь)
-        City Novosibirsk = new City("N",55.01464,"E",82.93167,"Novosibirsk");
-        City Moscow = new City("N", 55.77657, "E", 37.70508,"Moscow");
-        City Vladivostok = new City("N", 43.17376, "E", 131.99841,"Vladivostok");
+        //Инициализация массива городов. Добавьте свои по желанию.
+        City Novosibirsk = new City("N",55.01464,"E",82.93167,"Новосибирск");
+        City Moscow = new City("N", 55.77657, "E", 37.70508,"Москва");
+        City Vladivostok = new City("N", 43.17376, "E", 131.99841,"Владивосток");
 
         City[] Cities = new City[3] {Novosibirsk,Moscow,Vladivostok};
 
@@ -396,17 +398,21 @@ public class Program
                     double latitude = DecodeRational64u(image.GetPropertyItem(2));                             
                     string gpsLongitudeRef = BitConverter.ToChar(image.GetPropertyItem(3).Value, 0).ToString();//Клятая западная долгота или наша православная восточная долгота
                     double longitude = DecodeRational64u(image.GetPropertyItem(4));
-                    //Console.WriteLine("{0}\t{1} {2}, {3} {4}", file, gpsLatitudeRef, latitude, gpsLongitudeRef, longitude);
+
+                    //Конвертируем запад и юг в север и восток для удобства
+                    if (Cities[0].gpsLatitudeRef == "S") Cities[0].latitude += 180;
+                    if (Cities[0].gpsLongitudeRef == "W") Cities[0].longitude += 180;
+                    if (gpsLongitudeRef == "W") longitude += 180;
+                    if (gpsLatitudeRef == "S") latitude += 180;
 
                     //Ищем среди всего массива городов самый приближенный
-                    double difference = Math.Abs(Convert.ToDouble(latitude) - Cities[0].latitude) + Math.Abs(Convert.ToDouble(longitude) - Cities[0].longitude);
+                    double difference = CalculateTheDistance(latitude, Cities[0].latitude, longitude, Cities[0].longitude);
                     string CityName = Cities[0].Name;
-
                     foreach (City city in Cities)
                     {
-                        if (Math.Abs(Convert.ToDouble(latitude) - city.latitude) + Math.Abs(Convert.ToDouble(longitude) - city.longitude) < difference)
+                        if (CalculateTheDistance(latitude, city.latitude, longitude, city.longitude) < difference)
                         {
-                            difference = Math.Abs(Convert.ToDouble(latitude) - city.latitude) + Math.Abs(Convert.ToDouble(longitude) - city.longitude);
+                            difference = CalculateTheDistance(latitude, city.latitude, longitude, city.longitude);
                             CityName = city.Name;
                         }
                     }
@@ -438,6 +444,35 @@ public class Program
         }
     }
 
+    public static double CalculateTheDistance(double lat1,double lat2, double long1,double long2)
+    {
+
+        //Переводим координаты в радианы
+        lat1 =lat1*Math.PI/180;
+        lat2 = lat2 * Math.PI / 180;
+        long1 = long1 * Math.PI / 180;
+        long2 = long2 * Math.PI / 180;
+
+        //Косинусы и синусы широт и разности долгот
+        double distance=0, cl1,cl2,sl1,sl2,delta,cdelta,sdelta;
+        cl1 = Math.Cos(lat1);
+        cl2 = Math.Cos(lat2);
+        sl1 = Math.Sin(lat1);
+        sl2 = Math.Sin(lat2);
+        delta = long2 - long1;
+        cdelta = Math.Cos(delta);
+        sdelta = Math.Sin(delta);
+
+        //Вычисление длины большого круга
+        double x, y;
+        y = Math.Sqrt(Math.Pow(cl2 * sdelta, 2)) + Math.Pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2);
+        x = sl1 * sl2 + cl1 * cl2 * cdelta;
+
+        //вычисление дистанции
+        double ad = Math.Atan2(y, x);
+        distance = ad * 6372795;  //Радиус земли в метрах.
+        return distance;
+    }
 
     public static double DecodeRational64u(PropertyItem propertyItem)
     {
